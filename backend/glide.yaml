@@ -1,0 +1,9 @@
+package: github.com/austinov/gyn-backend
+import:
+- package: github.com/labstack/echo
+  version: ^2.1.0
+  subpackages:
+  - engine
+  - engine/standard
+  - middleware
+- package: github.com/spf13/viper
