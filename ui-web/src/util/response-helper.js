@@ -50,8 +50,7 @@ module.exports = {
 
 // Sample function for error message customization.
 // Error code could be mapped to localized message using some localization lib
-// (like i18next). Here, for simplicity, we just provide more readable
-// English text.
+// (like i18next). Here, for simplicity, we just provide more readable English text.
 function msgForErr(err) {
     if (Array.isArray(err)) {
         let msg = '';
@@ -69,21 +68,11 @@ function msgForErr(err) {
 		case 'login-format':
 		case 'password-required':
 		case 'password-format':
-		case 'email-required':
-		case 'email-format':
-            // messages from server are good enough for demo,
-            // but can be localized here
             return err.message + '.';
         case 'invalid_req_param':
             return 'Invalid request parameter.';
-        case 'account_disabled':
-            return 'Account created but not activated yet. ' +
-                'Please follow the link sent you by email to activate account ' +
-                'and than try to login again.';
-        case 'duplicate_account':
-            return 'Sorry, this username already in use.';
         case 'auth_err':
-            return 'Incorrect combination of username and password.';
+            return 'Incorrect username or password.';
     }
     return 'Server reported unrecognized error: ' + err.message;
 }
