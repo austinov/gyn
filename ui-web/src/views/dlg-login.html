@@ -1,0 +1,94 @@
+'use strict';
+
+import dispatcher from '../dispatcher'
+import _fetch from '../util/fetch';
+import respHelper from '../util/response-helper';
+
+<dlg-login>
+    <div if="{ visible }"
+         class="modal"
+         tabindex="-1"
+         role="dialog"
+         onclick="{ close }">
+        <div class="modal-dialog">
+            <div name="modalContent"
+                 class="modal-content"
+                 onclick="{ onModalContentClick }">
+                <div name="modalHeader"
+                     class="modal-header">
+                    <button type="button"
+                            class="close"
+                            onclick="{ close }"><span>&times;</span></button>
+                    <h4 class="modal-title">Login</h4>
+                </div>
+                <div name="modalBody"
+                     class="modal-body container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <error-msg error="{ error }"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <auth onlogin="{ onLogin }"
+                                  onerror="{ onError }"/>
+                            <div class="checkbox"
+                                 style="text-align:center">
+                                <label><input type="checkbox" name="staysigned"/>
+                                    Stay signed in</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let self = this;
+        self.visible = false;
+        self.show = () => {
+            self.error = '';
+            self.tags.auth.init();
+            self.visible = true;
+            self.update();
+        }
+        self.close = () => {
+            self.visible = false;
+            self.update();
+            opts.onclose && opts.onclose();
+        }
+        self.onModalContentClick = (e) => {
+            e.stopPropagation();
+            return true;
+        }
+        dispatcher.on(dispatcher.SHOW_LOGIN_DIALOG, () => {
+            self.show();
+            self.update();
+        });
+        self.onLogin = (loginForm) => {
+            self.error = '';
+            _fetch.fetch('/api/login', {
+                method: 'POST',
+                body: new FormData(loginForm)
+            })
+            .then(r => {
+                return respHelper.handleStatus(r);
+            })
+            .then(data => {
+                const {redirUrl} = data;
+                window.location.href = redirUrl;
+            })
+            .catch(e => {
+                console.log('error', e);
+                self.error = 'Could not authenticate. ';
+                if (e.msg) {
+                    self.error += e.msg;
+                }
+                self.update();
+            });
+        }
+        self.onError = (error) => {
+            self.update({error:error});
+        }
+    </script>
+</dlg-login>

@@ -1,0 +1,21 @@
+'use strict';
+
+import dispatcher from '../dispatcher'
+
+<app>
+  <navbar
+    username="{ user.username }"
+    authorized="{ user.authorized }">
+  </navbar>
+  <dlg-login></dlg-login>
+  <patients authorized="{ user.authorized }"></patients>
+
+  <script>
+    let self = this;
+    self.user = {authorized: false};
+    dispatcher.on(dispatcher.PROFILE_CHANGED, (user) => {
+        self.user = user;
+        self.update();
+    });
+  </script>
+</app>

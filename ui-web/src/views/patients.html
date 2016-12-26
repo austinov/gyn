@@ -1,0 +1,29 @@
+'use strict';
+
+import dispatcher from '../dispatcher';
+
+<patients>
+  <div class="page-header container-fluid">
+    <div class="row">
+      <div if="{ !opts.authorized }" class="col-lg-6">
+        <h3>Please login to view patients</h3>
+      </div>
+    </div>
+    <div class="row">
+      <form if="{ opts.authorized }"
+            name="patients-form"
+            class="form-group col-lg-4">
+        <div>
+            <h3>List of Patients</h3>
+        </div>
+      </form>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <error-msg error="{ error }"/>
+      </div>
+    </div>
+  </div>
+  <script>
+  </script>
+</patients>
