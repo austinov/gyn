@@ -1,41 +1,48 @@
 package main
 
 import (
-	"flag"
 	"log"
 
 	"github.com/austinov/gyn/backend/config"
+	"github.com/austinov/gyn/backend/handler"
 	"github.com/austinov/gyn/backend/route"
+	"github.com/austinov/gyn/backend/store"
+	"github.com/austinov/gyn/backend/store/pg"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine"
 	"github.com/labstack/echo/engine/standard"
 )
 
-var (
-	cfgPath, cfgName string
-	debugMode        bool
-)
-
 func main() {
-	flag.StringVar(&cfgPath, "cfg-dir", "", "dir with app's config")
-	flag.StringVar(&cfgName, "cfg-name", "", "app's config base file name")
-	flag.BoolVar(&debugMode, "dbg", false, "debug mode")
-	flag.Parse()
-	config.Init(cfgPath, cfgName)
 	c := config.Get()
 
 	e := echo.New()
-	if debugMode {
+	if c.DebugMode {
 		e.SetDebug(true)
 		e.SetLogLevel(0)
 	}
 
-	route.Init(e)
+	dao := createDao(c.DB)
+	defer dao.Close()
+
+	h := handler.New(c, dao, handler.NewErrorCustomizer())
+
+	route.Init(e, h)
 
 	log.Printf("Serving at address: '%s'.", c.ListenAddr)
 	log.Printf("Press Ctrl+C to exit.")
 
 	e.Run(standard.WithConfig(engine.Config{
 		Address: c.ListenAddr,
+		// TODO TLS
 	}))
+}
+
+func createDao(cfg config.DBConfig) store.Dao {
+	switch cfg.Type {
+	case "pg":
+		return pg.New(cfg)
+	}
+	log.Fatal("Unknown db type " + cfg.Type)
+	return nil
 }
