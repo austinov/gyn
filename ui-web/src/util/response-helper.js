@@ -68,6 +68,7 @@ function msgForErr(err) {
 		case 'login-format':
 		case 'password-required':
 		case 'password-format':
+		case 'srv_err':
             return err.message + '.';
         case 'invalid_req_param':
             return 'Invalid request parameter.';
