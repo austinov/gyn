@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -v
+
+# (re)create empty DB
+
+dropdb gyn 
+sudo -u postgres dropuser $USER 
+sudo -u postgres createuser -d $USER
+createdb gyn
+
+# create tables
+
+psql -d gyn -f ./create-tables.sql

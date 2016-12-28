@@ -12,13 +12,17 @@ import (
 )
 
 const (
-	userExist = `
-	  SELECT count(id) FROM users WHERE login = $1 AND psw_hash = $2`
+	userPasswordHash = `
+	  SELECT psw_hash FROM users WHERE login = $1`
+
+	userProfile = `
+	  SELECT name FROM users WHERE login = $1`
 )
 
 var (
-	UserNotFoundError = errors.New("user not found")
-	userExistStmt     *sql.Stmt
+	UserNotFoundError    = errors.New("user not found")
+	userPasswordHashStmt *sql.Stmt
+	userProfileStmt      *sql.Stmt
 )
 
 type dao struct {
@@ -30,7 +34,11 @@ func New(cfg config.DBConfig) store.Dao {
 	if err != nil {
 		log.Fatal(err)
 	}
-	userExistStmt, err = db.Prepare(userExist)
+	userPasswordHashStmt, err = db.Prepare(userPasswordHash)
+	if err != nil {
+		log.Fatal(err)
+	}
+	userProfileStmt, err = db.Prepare(userProfile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,29 +48,27 @@ func New(cfg config.DBConfig) store.Dao {
 }
 
 func (d *dao) Close() error {
-	userExistStmt.Close()
+	userPasswordHashStmt.Close()
+	userProfileStmt.Close()
 	d.db.Close()
 	return nil
 }
 
 func (d *dao) Authenticate(login, password string) error {
-	// TODO
-	var cnt int
-	if err := userExistStmt.QueryRow(login, util.Hash(password)).Scan(&cnt); err != nil {
+	var hash string
+	if err := userPasswordHashStmt.QueryRow(login).Scan(&hash); err != nil {
 		return err
 	}
-	if cnt == 1 {
+	if err := util.CompareHashAndText(hash, password); err == nil {
 		return nil
 	}
-	//if login == "q@aa.zz" && password == "123" {
-	//	return nil
-	//}
 	return UserNotFoundError
 }
 
 func (d *dao) GetProfile(login string) (store.Profile, error) {
-	// TODO
+	var name string
+	err := userProfileStmt.QueryRow(login).Scan(&name)
 	return store.Profile{
-		UserName: "Алексей Лукаев",
-	}, nil
+		UserName: name,
+	}, err
 }

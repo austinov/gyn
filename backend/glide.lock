@@ -1,5 +1,5 @@
-hash: 2a5d1a8ff25aadcfc3d65c8e0b508a7f76a5c84db2c12f3386630e23b91be984
-updated: 2016-12-27T11:44:27.434480663+03:00
+hash: a5c7ff458d4667f270d686bb1d6c1d87fb68d66d7872b429886808d51c796d00
+updated: 2016-12-28T23:16:42.316292714+03:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877
@@ -65,6 +65,11 @@ imports:
   version: 5ed0fc31f7f453625df314d8e66b9791e8d13003
 - name: github.com/valyala/fasttemplate
   version: 3b874956e03f1636d171bda64b130f9135f42cff
+- name: golang.org/x/crypto
+  version: f6b343c37ca80bfa8ea539da67a0b621f84fab1d
+  subpackages:
+  - bcrypt
+  - blowfish
 - name: golang.org/x/net
   version: 45e771701b814666a7eb299e6c7a57d0b1799e91
   subpackages:
