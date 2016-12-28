@@ -1,16 +1,12 @@
 package route
 
 import (
-	"net/http"
-
+	"github.com/austinov/gyn/backend/config"
+	"github.com/austinov/gyn/backend/handler"
 	"github.com/labstack/echo"
 )
 
-func initAPI(e *echo.Echo) {
-	e.GET("/api/login", login)
-}
-
-func login(c echo.Context) error {
-	// TODO
-	return c.String(http.StatusOK, "login...")
+func initAPI(e *echo.Echo, h handler.Handler) {
+	e.POST("/api/login", h.Login)
+	e.GET("/api/profile", h.Profile, tokenMiddleware(config.Get()))
 }
