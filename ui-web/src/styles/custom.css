@@ -33,16 +33,11 @@
 button, input {
     margin-bottom: 10px;
 }
+.new-inspenction-btn {
+    margin-left: 10px !important;
+}
 .error {
     margin: 10px auto;
     color: red;
     font-weight: bold;
-}
-.user-picture {
-    text-align: center;
-}
-.ellipsed-container a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }

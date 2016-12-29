@@ -10,13 +10,52 @@ import dispatcher from '../dispatcher';
       </div>
     </div>
     <div class="row">
-      <form if="{ opts.authorized }"
-            name="patients-form"
-            class="form-group col-lg-4">
-        <div>
-            <h3>List of Patients</h3>
+        <div if="{ opts.authorized }">
+            <h4>Search of Patients</h4>
+
+      <div class="input-group col-lg-4">
+         <input type="text"
+               name="words"
+               class="form-control"
+               onkeyup="{ searchInputKeyUp }"
+               placeholder="ФИО пациентки">
+        <span class="input-group-btn">
+          <button class="btn btn-default"
+                  type="button"
+                  onclick="{ clear }">&times;</button>
+        </span>
+        <span class="input-group-btn">
+          <a href="javascript:void(0)"
+             class="btn btn-default btn-block"
+             onclick="{ search }">
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+          </a>
+          <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+        </span>
+        <span class="input-group-btn">
+          <button class="btn btn-default new-inspenction-btn"
+                  type="button"
+                  onclick="{ clear }">Новый осмотр</button>
+        </span>
+      </div>
+
+            <h4>List of Patients</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed">
+          <tr>
+            <th>Пациент</th>
+            <th>Дата</th>
+            <th>Действия</th>
+          </tr>
+          <tr each="{ patients }">
+            <td>{ name }</td>
+            <td>{ date }</td>
+            <td>+/-</td>
+          </tr>
+        </table>
+      </div>
+
         </div>
-      </form>
     </div>
     <div class="row">
       <div class="col-lg-6">
@@ -25,5 +64,43 @@ import dispatcher from '../dispatcher';
     </div>
   </div>
   <script>
+      let self = this;
+      self.patients = [];
+      let onSearchPatientsChanged = (patients) => {
+              //self.tags.eventsList.refresh(events);
+              console.log('onSearchPatientsChanged', patients);
+              self.patients = patients;
+              self.update();
+      }
+      self.searchInputKeyUp = (e) => {
+          switch (e.which) {
+          case 27:
+          console.log('27');
+              self.clear();
+              return;
+          case 13:
+          console.log('13');
+              self.search();
+              return;
+          }
+      }
+      self.search = () => {
+          console.log('onSearch');
+          //let begin = self.period.getBegin(),
+          //    end = self.period.getEnd();
+          dispatcher.trigger(dispatcher.SEARCH_PATIENTS, {
+              //city: self.city.value === undefined ? self.city.name : self.city.value,
+              //begin: begin,
+              //end: end,
+              //words: self.tags['search-panel'].getSearchKeywords()
+              words: 'Соня Иванова'
+          });
+      }
+      self.clear = () => {
+          console.log('onClear');
+          self.words.value = '';
+          self.search();
+      }
+      dispatcher.on(dispatcher.SEARCH_PATIENTS_CHANGED, onSearchPatientsChanged);
   </script>
 </patients>
