@@ -1,0 +1,91 @@
+'use strict';
+
+import riot from 'riot';
+import dispatcher from '../dispatcher';
+
+<pages>
+ <div class="container">
+    <yield/>
+  </div>
+
+  <script>
+      let self = this;
+      self.activePage = '';
+      self.activeItemId = '';
+      self.activeAction = '';
+
+      // issued by riot.rout()
+      dispatcher.on(dispatcher.PAGE_CHANGE, (page, itemId, action) => {
+          let prevPage = self.activePage,
+              prevItemId = self.activeItemId,
+              prevAction = self.activeAction;
+          if (!self.tags[page]) {
+              self.activePage = '';
+              self.activeItemId = '';
+              self.activeAction = '';
+              setTimeout(() => {
+                  riot.route(opts.default);
+              }, 0);
+          } else {
+              self.activePage = page;
+              self.activeItemId = itemId;
+              self.activeAction = action;
+          }
+          if (self.activePage) {
+              dispatcher.trigger(dispatcher.PAGE_CHANGED, self.activePage);
+              scrollTo(0, 0);
+          }
+          if (self.activePage !== prevPage || self.activeItemId !== prevItemId
+              || self.activeAction !== prevAction) {
+              let forActivate = [],
+                  tagsInPages = self.tags;
+              for (let tagInPagesName in tagsInPages) {
+                  if (!tagsInPages.hasOwnProperty(tagInPagesName)) {
+                      continue;
+                  }
+                  let tagInPages = tagsInPages[tagInPagesName],
+                      tagsInPage = tagInPages.tags;
+                  for (let tagInPageName in tagsInPage) {
+                      if (!tagsInPage.hasOwnProperty(tagInPageName)) {
+                          continue;
+                      }
+                      let tagInPage = tagsInPage[tagInPageName];
+                      if (tagInPage) {
+                          let isActivePageProcessing = (self.activePage === tagInPages.opts.name);
+                          if (isActivePageProcessing) {
+                              tagInPage.opts.itemid = itemId;
+                              tagInPage.opts.action = action;
+                          }
+                          if (self.activePage !== prevPage) {
+                              if (isActivePageProcessing) {
+                                  tagInPage.activate && forActivate.push(tagInPage);
+                              } else {
+                                  tagInPage.passivate && tagInPage.passivate();
+                                  //tagInPage.unmount();
+                              }
+                          }
+                      }
+                  }
+              }
+              forActivate.forEach(el => {
+                  el.activate();
+              });
+              self.update();
+          }
+      });
+
+      self.getPagesOpts = () => {
+          let pages = [],
+              tagsInPages = self.tags;
+          for (let tagInPagesName in tagsInPages) {
+              if (!tagsInPages.hasOwnProperty(tagInPagesName)) {
+                  continue;
+              }
+              let tagInPages = tagsInPages[tagInPagesName];
+              pages.push(tagInPages.opts);
+
+          }
+          return pages;
+      }
+  </script>
+</pages>

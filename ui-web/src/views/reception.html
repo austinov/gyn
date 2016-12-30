@@ -1,0 +1,39 @@
+'use strict';
+
+import dispatcher from '../dispatcher';
+
+<reception>
+  <div class="page-header container-fluid">
+    <div class="row">
+      <div if="{ !opts.authorized }" class="col-lg-6">
+        <h3>Please login to view reception</h3>
+      </div>
+    </div>
+    <div class="row">
+        <div if="{ opts.authorized }">
+            <h4>{ receiptData.patient }</h4>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6">
+        <error-msg error="{ error }"/>
+      </div>
+    </div>
+  </div>
+  <script>
+      let self = this;
+      self.receiptData = {};
+      self.activate = () => {
+          console.log('=== in reception activate');
+          self.receiptData = {
+             patient: 'Иванова Мария Ивановна'
+          };
+          self.update();
+      }
+      self.passivate = () => {
+          console.log('=== in reception passivate');
+          self.receiptData = {};
+          self.update();
+      }
+  </script>
+</reception>

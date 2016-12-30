@@ -8,7 +8,15 @@ import dispatcher from '../dispatcher'
     authorized="{ user.authorized }">
   </navbar>
   <dlg-login></dlg-login>
-  <patients authorized="{ user.authorized }"></patients>
+
+  <pages id="pages" default="patients">
+    <page name="patients" caption="Patients">
+      <patients authorized="{ parent.parent.user.authorized }"></patients>
+    </page>
+    <page name="reception" caption="Reception">
+      <reception authorized="{ parent.parent.user.authorized }"></reception>
+    </page>
+  </pages>
 
   <script>
     let self = this;
