@@ -49,7 +49,10 @@ import dispatcher from '../dispatcher';
           <tr each="{ patients }">
             <td>{ name }</td>
             <td>{ date }</td>
-            <td>+/-</td>
+            <td>
+              <a href="#reception/{ id }/edit">Edit</a>
+              <a href="#reception/{ id }/doc">Doc</a>
+            </td>
           </tr>
         </table>
       </div>
