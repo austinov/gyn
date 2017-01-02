@@ -9,4 +9,5 @@ import (
 func initAPI(e *echo.Echo, h handler.Handler) {
 	e.POST("/api/login", h.Login)
 	e.GET("/api/profile", h.Profile, tokenMiddleware(config.Get()))
+	e.GET("/api/dictionaries", h.Dictionaries, tokenMiddleware(config.Get()))
 }

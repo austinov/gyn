@@ -16,6 +16,7 @@ import (
 type Handler interface {
 	Login(c echo.Context) error
 	Profile(c echo.Context) error
+	Dictionaries(c echo.Context) error
 }
 
 func New(cfg config.Config, dao store.Dao, ec ErrorCustomizer) Handler {
@@ -40,11 +41,6 @@ type (
 
 	loginReply struct {
 		RedirectURL string `json:"redirUrl"`
-	}
-
-	profileReply struct {
-		Login    string `json:"login"`
-		UserName string `json:"username"`
 	}
 )
 
@@ -88,11 +84,16 @@ func (h handler) Profile(c echo.Context) error {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
 		return c.JSON(http.StatusUnauthorized, h.ec.ServerError(err))
 	}
+	return c.JSON(http.StatusOK, profile)
+}
 
-	reply := profileReply{
-		UserName: profile.UserName,
+func (h handler) Dictionaries(c echo.Context) error {
+	dicts, err := h.dao.GetDictionaries()
+	if err != nil {
+		c.Logger().Debugf("%+v", errors.WithStack(err))
+		return c.JSON(http.StatusUnauthorized, h.ec.ServerError(err))
 	}
-	return c.JSON(http.StatusOK, reply)
+	return c.JSON(http.StatusOK, dicts)
 }
 
 func createCookie(authCookieName, accessToken string) *echo.Cookie {
