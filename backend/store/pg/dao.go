@@ -19,34 +19,36 @@ const (
 	  SELECT name FROM users WHERE login = $1`
 
 	dictionaries = `
-      SELECT id, name, 'pelvis_states' AS dict FROM pelvis_states
-      UNION ALL
-      SELECT id, name, 'fetal_bladder_aligns' AS dict FROM fetal_bladder_aligns
-      UNION ALL
-      SELECT id, name, 'fetal_bladder_previas' AS dict FROM fetal_bladder_previas
-      UNION ALL
-      SELECT id, name, 'outer_throat_states' AS dict FROM outer_throat_states
-      UNION ALL
-      SELECT id, name, 'vagina_states' AS dict FROM vagina_states
-      UNION ALL
-      SELECT id, name, 'devel_organs' AS dict FROM devel_organs
-      UNION ALL
-      SELECT id, name, 'reproductive_discharges' AS dict FROM reproductive_discharges
-      UNION ALL
-      SELECT id, name, 'fetal_aligns' AS dict FROM fetal_aligns
-      UNION ALL
-      SELECT id, name, 'fetal_heartbeats' AS dict FROM fetal_heartbeats
-      UNION ALL
-      SELECT id, name, 'fetal_previas' AS dict FROM fetal_previas
-      UNION ALL
-      SELECT id, name, 'fetal_positions' AS dict FROM fetal_positions
-      UNION ALL
-      SELECT id, name, 'uteruse_states' AS dict FROM uteruse_states
-      UNION ALL
-      SELECT id, name, 'skin_states' AS dict FROM skin_states
-      UNION ALL
-      SELECT id, name, 'health_states' AS dict FROM health_states
-      ORDER BY dict, id;`
+	  SELECT id, name, dict FROM (
+        SELECT id, name, 'pelvis_states' AS dict, orderby FROM pelvis_states
+        UNION ALL
+        SELECT id, name, 'fetal_bladder_aligns' AS dict, orderby FROM fetal_bladder_aligns
+        UNION ALL
+        SELECT id, name, 'fetal_bladder_previas' AS dict, orderby FROM fetal_bladder_previas
+        UNION ALL
+        SELECT id, name, 'outer_throat_states' AS dict, orderby FROM outer_throat_states
+        UNION ALL
+        SELECT id, name, 'vagina_states' AS dict, orderby FROM vagina_states
+        UNION ALL
+        SELECT id, name, 'devel_organs' AS dict, orderby FROM devel_organs
+        UNION ALL
+        SELECT id, name, 'reproductive_discharges' AS dict, orderby FROM reproductive_discharges
+        UNION ALL
+        SELECT id, name, 'fetal_aligns' AS dict, orderby FROM fetal_aligns
+        UNION ALL
+        SELECT id, name, 'fetal_heartbeats' AS dict, orderby FROM fetal_heartbeats
+        UNION ALL
+        SELECT id, name, 'fetal_previas' AS dict, orderby FROM fetal_previas
+        UNION ALL
+        SELECT id, name, 'fetal_positions' AS dict, orderby FROM fetal_positions
+        UNION ALL
+        SELECT id, name, 'uteruse_states' AS dict, orderby FROM uteruse_states
+        UNION ALL
+        SELECT id, name, 'skin_states' AS dict, orderby FROM skin_states
+        UNION ALL
+        SELECT id, name, 'health_states' AS dict, orderby FROM health_states
+      ) t
+      ORDER BY t.dict,  t.orderby, t.id;`
 )
 
 var (

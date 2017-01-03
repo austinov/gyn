@@ -21,8 +21,9 @@ CREATE INDEX ind_patients_id ON patients USING btree (id);
 CREATE UNIQUE INDEX uni_patients ON patients (lower(name));
 
 CREATE TABLE IF NOT EXISTS health_states (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE health_states IS 'Типы состояния пациента';
 CREATE INDEX ind_health_states_id ON health_states USING btree (id);
@@ -31,8 +32,9 @@ CREATE UNIQUE INDEX uni_health_states ON health_states (lower(name));
 INSERT INTO health_states (name) VALUES ('относительно удовлетворительное'), ('удовлетворительное'), ('средней тяжести'), ('тяжелое');
 
 CREATE TABLE IF NOT EXISTS skin_states (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE skin_states IS 'Типы состояния кожных покровов';
 CREATE INDEX ind_skin_states_id ON skin_states USING btree (id);
@@ -41,8 +43,9 @@ CREATE UNIQUE INDEX uni_skin_states ON skin_states (lower(name));
 INSERT INTO skin_states (name) VALUES ('бледно-розовой окраски'), ('бледные');
 
 CREATE TABLE IF NOT EXISTS uteruse_states (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE uteruse_states IS 'Типы состояния матки';
 CREATE INDEX ind_uteruse_states_id ON uteruse_states USING btree (id);
@@ -51,8 +54,9 @@ CREATE UNIQUE INDEX uni_uteruse_states ON uteruse_states (lower(name));
 INSERT INTO uteruse_states (name) VALUES ('невозбудима'), ('слегка возбудима'), ('возбудима'), ('в гипертонусе');
 
 CREATE TABLE IF NOT EXISTS fetal_positions (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE fetal_positions IS 'Типы состояния положения плода';
 CREATE INDEX ind_fetal_positions_id ON fetal_positions USING btree (id);
@@ -61,8 +65,9 @@ CREATE UNIQUE INDEX uni_fetal_positions ON fetal_positions (lower(name));
 INSERT INTO fetal_positions (name) VALUES ('продольное'), ('косое'), ('поперечное');
 
 CREATE TABLE IF NOT EXISTS fetal_previas (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE fetal_previas IS 'Типы предлежаний плода';
 CREATE INDEX ind_fetal_previas_id ON fetal_previas USING btree (id);
@@ -71,8 +76,9 @@ CREATE UNIQUE INDEX uni_fetal_previas ON fetal_previas (lower(name));
 INSERT INTO fetal_previas (name) VALUES ('головка'), ('тазовый конец'), ('смешанное'), ('ножки плода');
 
 CREATE TABLE IF NOT EXISTS fetal_aligns (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE fetal_aligns IS 'Типы выравниваний плода';
 CREATE INDEX ind_fetal_aligns_id ON fetal_aligns USING btree (id);
@@ -81,8 +87,9 @@ CREATE UNIQUE INDEX uni_fetal_aligns ON fetal_aligns (lower(name));
 INSERT INTO fetal_aligns (name) VALUES ('над входом в малый таз'), ('прижата ко входу в малый таз');
 
 CREATE TABLE IF NOT EXISTS fetal_heartbeats (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE fetal_heartbeats IS 'Типы сердцебиения плода';
 CREATE INDEX ind_fetal_heartbeats_id ON fetal_heartbeats USING btree (id);
@@ -91,8 +98,9 @@ CREATE UNIQUE INDEX uni_fetal_heartbeats ON fetal_heartbeats (lower(name));
 INSERT INTO fetal_heartbeats (name) VALUES ('ясное'), ('ритмичное'), ('приглушенное'), ('глухое');
 
 CREATE TABLE IF NOT EXISTS reproductive_discharges (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE reproductive_discharges IS 'Типы выделений из половых путей';
 CREATE INDEX ind_reproductive_discharges_id ON reproductive_discharges USING btree (id);
@@ -101,8 +109,9 @@ CREATE UNIQUE INDEX uni_reproductive_discharges ON reproductive_discharges (lowe
 INSERT INTO reproductive_discharges (name) VALUES ('светлые'), ('слизистые'), ('кровянистые'), ('умеренные'), ('обильные');
 
 CREATE TABLE IF NOT EXISTS devel_organs (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE devel_organs IS 'Типы развития наружних половых органов';
 CREATE INDEX ind_devel_organs_id ON devel_organs USING btree (id);
@@ -111,8 +120,9 @@ CREATE UNIQUE INDEX uni_devel_organs ON devel_organs (lower(name));
 INSERT INTO devel_organs (name) VALUES ('правильно, аномалий нет'), ('аномалии');
 
 CREATE TABLE IF NOT EXISTS vagina_states (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE vagina_states IS 'Типы состояний влагалища';
 CREATE INDEX ind_vagina_states_id ON vagina_states USING btree (id);
@@ -121,8 +131,9 @@ CREATE UNIQUE INDEX uni_vagina_states ON vagina_states (lower(name));
 INSERT INTO vagina_states (name) VALUES ('рожавшей'), ('не рожавшей');
 
 CREATE TABLE IF NOT EXISTS outer_throat_states (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE outer_throat_states IS 'Типы наружнего зева';
 CREATE INDEX ind_outer_throat_states_id ON outer_throat_states USING btree (id);
@@ -131,8 +142,9 @@ CREATE UNIQUE INDEX uni_outer_throat_states ON outer_throat_states (lower(name))
 INSERT INTO outer_throat_states (name) VALUES ('пропускает кончик пальца'), ('закрыт (0 баллов)');
 
 CREATE TABLE IF NOT EXISTS fetal_bladder_previas (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE fetal_bladder_previas IS 'Типы предлежания плодный пузырья';
 CREATE INDEX ind_fetal_bladder_previas_id ON fetal_bladder_previas USING btree (id);
@@ -141,8 +153,9 @@ CREATE UNIQUE INDEX uni_fetal_bladder_previas ON fetal_bladder_previas (lower(na
 INSERT INTO fetal_bladder_previas (name) VALUES ('головка'), ('ягодицы'), ('ножки');
 
 CREATE TABLE IF NOT EXISTS fetal_bladder_aligns (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE fetal_bladder_aligns IS 'Типы прижатия плодного пузыря';
 CREATE INDEX ind_fetal_bladder_aligns_id ON fetal_bladder_aligns USING btree (id);
@@ -151,8 +164,9 @@ CREATE UNIQUE INDEX uni_fetal_bladder_aligns ON fetal_bladder_aligns (lower(name
 INSERT INTO fetal_bladder_aligns (name) VALUES ('прижата'), ('подвижна'), ('над входом в малый таз');
 
 CREATE TABLE IF NOT EXISTS pelvis_states (
-    "id"   serial primary key,
-    "name" varchar(100) NOT NULL
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
 );
 COMMENT ON TABLE pelvis_states IS 'Типы состояний костного таза';
 CREATE INDEX ind_pelvis_states_id ON pelvis_states USING btree (id);
@@ -342,33 +356,3 @@ ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_positions FOREIGN 
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_uteruse_states FOREIGN KEY (uteruse_state_id) REFERENCES uteruse_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_skin_states FOREIGN KEY (skin_state_id) REFERENCES skin_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_health_states FOREIGN KEY (health_state_id) REFERENCES health_states (id);
-
-
-SELECT id, name, 'pelvis_states' AS dict FROM pelvis_states
-UNION ALL
-SELECT id, name, 'fetal_bladder_aligns' AS dict FROM fetal_bladder_aligns
-UNION ALL
-SELECT id, name, 'fetal_bladder_previas' AS dict FROM fetal_bladder_previas
-UNION ALL
-SELECT id, name, 'outer_throat_states' AS dict FROM outer_throat_states
-UNION ALL
-SELECT id, name, 'vagina_states' AS dict FROM vagina_states
-UNION ALL
-SELECT id, name, 'devel_organs' AS dict FROM devel_organs
-UNION ALL
-SELECT id, name, 'reproductive_discharges' AS dict FROM reproductive_discharges
-UNION ALL
-SELECT id, name, 'fetal_aligns' AS dict FROM fetal_aligns
-UNION ALL
-SELECT id, name, 'fetal_heartbeats' AS dict FROM fetal_heartbeats
-UNION ALL
-SELECT id, name, 'fetal_previas' AS dict FROM fetal_previas
-UNION ALL
-SELECT id, name, 'fetal_positions' AS dict FROM fetal_positions
-UNION ALL
-SELECT id, name, 'uteruse_states' AS dict FROM uteruse_states
-UNION ALL
-SELECT id, name, 'skin_states' AS dict FROM skin_states
-UNION ALL
-SELECT id, name, 'health_states' AS dict FROM health_states
-ORDER BY dict, id;

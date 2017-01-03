@@ -91,7 +91,7 @@ func (h handler) Dictionaries(c echo.Context) error {
 	dicts, err := h.dao.GetDictionaries()
 	if err != nil {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
-		return c.JSON(http.StatusUnauthorized, h.ec.ServerError(err))
+		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
 	return c.JSON(http.StatusOK, dicts)
 }
