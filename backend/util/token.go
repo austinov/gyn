@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var InvalidTokenError = errors.New("invalid token")
+var ErrInvalidToken = errors.New("invalid token")
 
 func NewToken(issuer, audience, subject string, expiration time.Duration, signKey []byte) (string, error) {
 	claims :=
@@ -33,10 +33,10 @@ func ParseToken(issuer, tokenValue string, signKey []byte) (*jwt.StandardClaims,
 	}
 	claims, ok := token.Claims.(*jwt.StandardClaims)
 	if !ok || !token.Valid {
-		return nil, errors.WithStack(InvalidTokenError)
+		return nil, errors.WithStack(ErrInvalidToken)
 	}
 	if claims.Issuer != issuer {
-		return nil, errors.WithStack(InvalidTokenError)
+		return nil, errors.WithStack(ErrInvalidToken)
 	}
 	return claims, nil
 }

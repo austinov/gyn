@@ -2,7 +2,6 @@ package pg
 
 import (
 	"database/sql"
-	"errors"
 	"log"
 
 	"github.com/austinov/gyn/backend/config"
@@ -48,14 +47,21 @@ const (
         UNION ALL
         SELECT id, name, 'health_states' AS dict, orderby FROM health_states
       ) t
-      ORDER BY t.dict,  t.orderby, t.id;`
+      ORDER BY t.dict,  t.orderby, t.id`
+
+	patientAppointment = `
+	  SELECT a.*, u.name AS doctor_name, p.name AS patient_name
+	  FROM appointments a
+        JOIN users u ON a.doctor_id = u.id
+		JOIN patients p ON a.patient_id = p.id
+	  WHERE a.id = $1`
 )
 
 var (
-	UserNotFoundError    = errors.New("user not found")
-	userPasswordHashStmt *sql.Stmt
-	userProfileStmt      *sql.Stmt
-	dictionariesStmt     *sql.Stmt
+	userPasswordHashStmt   *sql.Stmt
+	userProfileStmt        *sql.Stmt
+	dictionariesStmt       *sql.Stmt
+	patientAppointmentStmt *sql.Stmt
 )
 
 type dao struct {
@@ -79,6 +85,10 @@ func New(cfg config.DBConfig) store.Dao {
 	if err != nil {
 		log.Fatal(err)
 	}
+	patientAppointmentStmt, err = db.Prepare(patientAppointment)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return &dao{
 		db: db,
 	}
@@ -88,6 +98,7 @@ func (d *dao) Close() error {
 	userPasswordHashStmt.Close()
 	userProfileStmt.Close()
 	dictionariesStmt.Close()
+	patientAppointmentStmt.Close()
 	d.db.Close()
 	return nil
 }
@@ -100,7 +111,7 @@ func (d *dao) Authenticate(login, password string) error {
 	if err := util.CompareHashAndText(hash, password); err == nil {
 		return nil
 	}
-	return UserNotFoundError
+	return store.ErrUserNotFound
 }
 
 func (d *dao) GetProfile(login string) (store.Profile, error) {
@@ -136,4 +147,94 @@ func (d *dao) GetDictionaries() (map[string][]store.Dictionary, error) {
 		result[dict] = dicts
 	}
 	return result, rows.Err()
+}
+
+func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
+	ap := store.Appointment{}
+	err := patientAppointmentStmt.QueryRow(id).Scan(
+		&ap.Id,
+		&ap.Date,
+		&ap.DoctorId,
+		&ap.PatientId,
+		&ap.HowReceipt,
+		&ap.Alergo,
+		&ap.ContactInfectied,
+		&ap.Hiv,
+		&ap.Transfusion,
+		&ap.Dyscountry,
+		&ap.Smoking,
+		&ap.Drugs,
+		&ap.Inheritance,
+		&ap.Diseases,
+		&ap.Gyndiseases,
+		&ap.Paritet,
+		&ap.Pregnancy,
+		&ap.FirstTrimester,
+		&ap.SecondTrimester,
+		&ap.ThirdTrimester,
+		&ap.History,
+		&ap.ExpByMenstruation,
+		&ap.ExpByFirstVisit,
+		&ap.ExpByUltra,
+		&ap.HealthStateId,
+		&ap.Claims,
+		&ap.Head,
+		&ap.Vision,
+		&ap.SkinStateId,
+		&ap.Lymph,
+		&ap.Breath,
+		&ap.Rale,
+		&ap.Tones,
+		&ap.Pulse,
+		&ap.PulseType,
+		&ap.Pressure,
+		&ap.TongueClean,
+		&ap.TongueWet,
+		&ap.TongueDry,
+		&ap.TongueCoated,
+		&ap.TongueUncoated,
+		&ap.Throat,
+		&ap.Belly,
+		&ap.Peritoneal,
+		&ap.Labors,
+		&ap.Dysuric,
+		&ap.Bowel,
+		&ap.LimbSwelling,
+		&ap.FaceSwelling,
+		&ap.UteruseStateId,
+		&ap.FetalPositionId,
+		&ap.FetalPreviaId,
+		&ap.FetalAlignId,
+		&ap.FetalHeartbeatId,
+		&ap.FetalPulse,
+		&ap.ReproductiveDischargeId,
+		&ap.Vdm,
+		&ap.Oj,
+		&ap.Dspin,
+		&ap.Dcrist,
+		&ap.Dtroch,
+		&ap.Cext,
+		&ap.DevelOrgansId,
+		&ap.GenitalAnomalies,
+		&ap.VaginaStateId,
+		&ap.LenghtCervix,
+		&ap.TruncateCervix,
+		&ap.OuterThroatStateId,
+		&ap.ChannelCervix,
+		&ap.FetalBladder,
+		&ap.FetalBladderPreviaId,
+		&ap.FetalBladderAlignId,
+		&ap.Arches,
+		&ap.Conjugate,
+		&ap.PelvisStateId,
+		&ap.PelvisDischarge,
+		&ap.Diagnosis,
+		&ap.Conclusion,
+		&ap.BirthPlan,
+		&ap.DoctorName,
+		&ap.PatientName)
+	if err != nil && err == sql.ErrNoRows {
+		err = store.ErrDataNotFound
+	}
+	return ap, err
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/austinov/gyn/backend/config"
@@ -17,6 +18,7 @@ type Handler interface {
 	Login(c echo.Context) error
 	Profile(c echo.Context) error
 	Dictionaries(c echo.Context) error
+	Appointment(c echo.Context) error
 }
 
 func New(cfg config.Config, dao store.Dao, ec ErrorCustomizer) Handler {
@@ -94,6 +96,23 @@ func (h handler) Dictionaries(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
 	return c.JSON(http.StatusOK, dicts)
+}
+
+func (h handler) Appointment(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.Logger().Debugf("%+v", errors.WithStack(err))
+		return c.JSON(http.StatusBadRequest, h.ec.InvalidRequestParameterError(err))
+	}
+	appointment, err := h.dao.GetAppointment(id)
+	if err != nil {
+		if err == store.ErrDataNotFound {
+			return c.JSON(http.StatusBadRequest, h.ec.NoDataError(err))
+		}
+		c.Logger().Debugf("%+v", errors.WithStack(err))
+		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
+	}
+	return c.JSON(http.StatusOK, appointment)
 }
 
 func createCookie(authCookieName, accessToken string) *echo.Cookie {

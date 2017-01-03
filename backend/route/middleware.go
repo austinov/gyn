@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	InvalidAuthHeaderError = echo.NewHTTPError(http.StatusForbidden, "invalid header format")
+	ErrInvalidAuthHeader = echo.NewHTTPError(http.StatusForbidden, "invalid header format")
 )
 
 func initMiddleware(e *echo.Echo) {
@@ -27,11 +27,11 @@ func tokenMiddleware(cfg config.Config) echo.MiddlewareFunc {
 			auth := c.Request().Header().Get("Authorization")
 			split := strings.SplitN(auth, " ", 2)
 			if len(split) != 2 || !strings.EqualFold(split[0], "bearer") {
-				return InvalidAuthHeaderError
+				return ErrInvalidAuthHeader
 			}
 			token := strings.TrimSpace(split[1])
 			if token == "" {
-				return InvalidAuthHeaderError
+				return ErrInvalidAuthHeader
 			}
 			claims, err := util.ParseToken(cfg.JWT.Issuer, token, cfg.JWT.SignKey)
 			if err != nil {

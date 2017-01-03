@@ -15,6 +15,7 @@ type ErrorCustomizer interface {
 	InvalidRequestParameterError(error) interface{}
 	UserAuthenticationError(error) interface{}
 	ServerError(error) interface{}
+	NoDataError(error) interface{}
 }
 
 func NewErrorCustomizer() ErrorCustomizer {
@@ -69,4 +70,8 @@ func (ec) UserAuthenticationError(e error) interface{} {
 
 func (ec) ServerError(e error) interface{} {
 	return []jsonError{{"srv_err", e.Error()}}
+}
+
+func (ec) NoDataError(e error) interface{} {
+	return []jsonError{{"no_data_err", e.Error()}}
 }
