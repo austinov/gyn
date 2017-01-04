@@ -36,6 +36,12 @@ button, input {
 .btn-receipt{
     margin-left: 10px !important;
 }
+.label-plus {
+    margin-top: 24px;
+}
+.zero-margin {
+    margin: 0 0 0 0;
+}
 .error {
     margin: 10px auto;
     color: red;

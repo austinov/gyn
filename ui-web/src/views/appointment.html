@@ -1,0 +1,619 @@
+'use strict';
+
+import dispatcher from '../dispatcher';
+import deepExtend from 'deep-extend';
+
+<appointment>
+  <div class="page-header container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <error-msg error="{ error }"/>
+      </div>
+    </div>
+    <div class="row">
+      <div if="{ !opts.authorized }" class="col-lg-12">
+        <h4>Для того, чтобы работать с данными пациента, пожалуйста, войдите в приложение.</h4>
+      </div>
+    </div>
+
+    <div if="{ opts.authorized }">
+      <div class="row">
+        <div class="{ col-md-2: true, has-error: dateReceiptError }">
+          <label class="control-label">Дата приёма (mm/dd/yyyy)</label>
+          <input type="date" class="form-control" name="dateReceipt" placeholder="mm/dd/yyyy" value="{ appointment.dateReceipt }">
+        </div>
+        <div class="{ col-md-5: true, has-error: patientNameError }">
+          <label class="control-label">ФИО</label>
+          <input type="text" class="form-control" name="patientName" placeholder="Фамилия Имя Отчество" value="{ appointment.patientName }">
+        </div>
+        <div class="col-md-5">
+          <label class="control-label">Дежурный врач акушер-гинеколог</label>
+          <input type="text" class="form-control" placeholder="Фамилия Имя Отчество" value="{ appointment.doctorName }" readonly>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Поступила</label>
+          <input type="text" class="form-control" name="howReceipt" placeholder="произвольный текст" value="{ appointment.howReceipt }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Аллергоанамнез</label>
+          <input type="text" class="form-control" name="alergo" placeholder="произвольный текст" value="{ appointment.alergo }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Контакт с инфекционными больными</label>
+          <input type="text" class="form-control" name="contactInfected" placeholder="произвольный текст" value="{ appointment.contactInfectied }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Малярия, туберкулез, гепатиты, ВИЧ</label>
+          <input type="text" class="form-control" name="hiv" placeholder="произвольный текст" value="{ appointment.hiv }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Гематрансфузия</label>
+          <input type="text" class="form-control" name="transfusion" placeholder="произвольный текст" value="{ appointment.transfusion }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Пребывание в неблагополучных странах в течении 3-х лет</label>
+          <input type="text" class="form-control" name="dyscountry" placeholder="произвольный текст" value="{ appointment.dyscountry }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Табакокурение</label>
+          <input type="text" class="form-control" name="smoking" placeholder="произвольный текст" value="{ appointment.smoking }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Прием наркотических, психотропных препаратов</label>
+          <input type="text" class="form-control" name="drugs" placeholder="произвольный текст" value="{ appointment.drugs }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Наследственность</label>
+          <input type="text" class="form-control" name="inheritance" placeholder="произвольный текст" value="{ appointment.inheritance }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Перенесенные заболевания</label>
+          <input type="text" class="form-control" name="diseases" placeholder="произвольный текст" value="{ appointment.diseases }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Гинекологические заболевания</label>
+          <input type="text" class="form-control" name="gyndiseases" placeholder="произвольный текст" value="{ appointment.gyndiseases }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">Паритет</label>
+          <input type="text" class="form-control" name="paritet" placeholder="произвольный текст" value="{ appointment.paritet }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">Течение беременности</label>
+          <input type="text" class="form-control" name="pregnancy" placeholder="произвольный текст" value="{ appointment.pregnancy }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">I тр.</label>
+          <input type="text" class="form-control" name="firstTrimester" placeholder="произвольный текст" value="{ appointment.firstTrimester }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">II тр.</label>
+          <input type="text" class="form-control" name="secondTrimester" placeholder="произвольный текст" value="{ appointment.secondTrimester }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">III тр.</label>
+          <input type="text" class="form-control" name="thirdTrimester" placeholder="произвольный текст" value="{ appointment.thirdTrimester }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">Из анамнеза</label>
+          <textarea class="form-control" rows="2" name="history" placeholder="произвольный текст" value="{ appointment.history }"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <p class="text-center"><strong>Сроки беременности</strong></p>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="control-label">по менструации</label>
+          <input type="text" class="form-control" name="expByMenstruation" placeholder="дата, кол-во недель" value="{ appointment.expByMenstruation }">
+        </div>
+        <div class="col-md-4">
+          <label class="control-label">по 1 явке</label>
+          <input type="text" class="form-control" name="expByFirstVisit" placeholder="дата, кол-во недель" value="{ appointment.expByFirstVisit }">
+        </div>
+        <div class="col-md-4">
+          <label class="control-label">по УЗИ</label>
+          <input type="text" class="form-control" name="expByUltra" placeholder="дата, кол-во недель" value="{ appointment.expByUltra }">
+        </div>
+      </div>
+      <div class="row">
+        <p class="text-center"><strong>Status praesens</strong></p>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="control-label">Состояние</label>
+          <select name="healthStateId" class="form-control">
+            <option each="{ k in dictionaries.health_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.healthStateId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-8">
+          <label class="control-label">Жалобы на</label>
+          <input type="text" class="form-control" name="claims" placeholder="произвольный текст" value="{ appointment.claims }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Голова</label>
+          <input type="text" class="form-control" name="head" placeholder="произвольный текст" value="{ appointment.head }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Зрение</label>
+          <input type="text" class="form-control" name="vision" placeholder="произвольный текст" value="{ appointment.vision }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="control-label">Кожные покровы</label>
+          <select name="skinStateId" class="form-control">
+            <option each="{ k in dictionaries.skin_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.skinStateId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-8">
+          <label class="control-label">Лимфоузлы</label>
+          <input type="text" class="form-control" name="lymph" placeholder="произвольный текст" value="{ appointment.lymph }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="control-label">Дыхание</label>
+          <input type="text" class="form-control" name="breath" placeholder="произвольный текст" value="{ appointment.breath }">
+        </div>
+        <div class="col-md-4">
+          <label class="control-label">Хрипы</label>
+          <input type="text" class="form-control" name="rale" placeholder="произвольный текст" value="{ appointment.rale }">
+        </div>
+        <div class="col-md-4">
+          <label class="control-label">Тоны cor</label>
+          <input type="text" class="form-control" name="tones" placeholder="произвольный текст" value="{ appointment.tones }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label class="control-label">Ps, уд. в мин.</label>
+          <input type="text" class="form-control" name="pulse" placeholder="число" value="{ appointment.pulse }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">Ритмичность</label>
+          <input type="text" class="form-control" name="pulseType" placeholder="текст" value="{ appointment.pulseType }">
+        </div>
+        <div class="col-md-8">
+          <label class="control-label">АД, мм. рт. ст.</label>
+          <input type="text" class="form-control" name="pressure" placeholder="диапазон чисел" value="{ appointment.pressure }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+          <label class="control-label">Язык</label>
+          <div>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueClean" value="{ appointment.tongueClean }">чистый</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueWet" value="{ appointment.tongueWet }">влажный</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueDry" value="{ appointment.tongueDry }">сухой</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueCoated" value="{ appointment.tongueCoated }">обложен</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueUncoated" value="{ appointment.tongueUncoated }">не обложен</label>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <label class="control-label">Осмотр зева</label>
+          <input type="text" class="form-control" name="throat" placeholder="произвольный текст" value="{ appointment.throat }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">Живот</label>
+          <input type="text" class="form-control" name="belly" placeholder="произвольный текст" value="{ appointment.belly }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Перитонеальные симптомы</label>
+          <input type="text" class="form-control" name="peritoneal" placeholder="произвольный текст" value="{ appointment.peritoneal }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Родовая деятельность</label>
+          <input type="text" class="form-control" name="labors" placeholder="произвольный текст" value="{ appointment.labors }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label class="control-label">Дизурические явления</label>
+          <div>
+            <label class="radio-inline"><input type="radio" name="dysuric" value="0" checked>нет</label>
+            <label class="radio-inline"><input type="radio" name="dysuric" value="1">есть</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label class="control-label">Стул</label>
+          <div>
+            <label class="radio-inline"><input type="radio" name="bowel" value="1" checked>регулярный</label>
+            <label class="radio-inline"><input type="radio" name="bowel" value="0">не регулярный</label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label class="control-label">Отеки</label>
+          <input type="text" class="form-control" name="limbSwelling" placeholder="произвольный текст" value="{ appointment.limbSwelling }">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label">Лица</label>
+          <input type="text" class="form-control" name="faceSwelling" placeholder="произвольный текст" value="{ appointment.faceSwelling }">
+        </div>
+      </div>
+      <div class="row">
+        <p class="text-center"><strong>Наружное акушерское исследование</strong></p>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label class="control-label">Матка</label>
+          <select name="uteruseStateId" class="form-control">
+            <option each="{ k in dictionaries.uteruse_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.uteruseStateId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Положение плода</label>
+          <select name="fetalPositionId" class="form-control">
+            <option each="{ k in dictionaries.fetal_positions }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.fetalPositionId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Предлежит</label>
+          <select name="fetalPreviaId" class="form-control">
+            <option each="{ k in dictionaries.fetal_previas }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.fetalPreviaId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select name="fetalAlignId" class="form-control label-plus">
+            <option each="{ k in dictionaries.fetal_aligns }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.fetalAlignId) }">{ k.name }</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label class="control-label">Сердцебиение плода</label>
+          <select name="fetalHeartbeatId" class="form-control">
+            <option each="{ k in dictionaries.fetal_heartbeats }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.fetalHeartbeatId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Ударов в мин.</label>
+          <input type="text" class="form-control" name="fetalPulse" placeholder="число" value="{ appointment.fetalPulse }">
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Выделения из половых путей</label>
+          <select name="reproductiveDischargeId" class="form-control">
+            <option each="{ k in dictionaries.reproductive_discharges }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.reproductiveDischargeId) }">{ k.name }</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label class="control-label">ВДМ, см.</label>
+          <input type="text" class="form-control" name="vdm" placeholder="число" value="{ appointment.vdm }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">ОЖ, см.</label>
+          <input type="text" class="form-control" name="oj" placeholder="число" value="{ appointment.oj }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">D.spin, см.</label>
+          <input type="text" class="form-control" name="dspin" placeholder="число" value="{ appointment.dspin }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">D.crist, см.</label>
+          <input type="text" class="form-control" name="dcrist" placeholder="число" value="{ appointment.dcrist }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">D.troch, см.</label>
+          <input type="text" class="form-control" name="dtroch" placeholder="число" value="{ appointment.dtroch }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">C.ext, см.</label>
+          <input type="text" class="form-control" name="cext" placeholder="число" value="{ appointment.cext }">
+        </div>
+      </div>
+      <div class="row">
+        <p class="text-center"><strong>Влагалищное исследование</strong></p>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label class="control-label">Наружние половые органы развиты</label>
+          <select name="develOrgansId" class="form-control">
+            <option each="{ k in dictionaries.devel_organs }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.develOrgansId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-3" if="{ true }">
+          <label class="control-label">Аномалии</label>
+          <input type="text" class="form-control" name="genitalAnomalies" placeholder="произвольный текст" value="{ appointment.genitalAnomalies }">
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Влагалище</label>
+          <select name="vaginaStateId" class="form-control">
+            <option each="{ k in dictionaries.vagina_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.vaginaStateId) }">{ k.name }</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+            <small>
+              Шейка матки (оценка по Бишопу, сумма баллов):
+              <br/>
+              отклонена кзади (0 баллов), кпереди (1 балл), центрирована (2 балла), плотная (0 баллов),
+              умеренно размягчена (1 балл), мягкая (2 балла) (&gt;2 см - 0 баллов, 1-2см - 1 балл, &lt;1 см - 2 балла).
+            </small>
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label class="control-label">Длиной, см.</label>
+          <input type="text" class="form-control" name="lenghtCervix" placeholder="диапазон чисел" value="{ appointment.lenghtCervix }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">Укорочена до, см.</label>
+          <input type="text" class="form-control" name="truncateCervix" placeholder="диапазон чисел" value="{ appointment.truncateCervix }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="control-label">Наружний зев</label>
+          <select name="outerThroatStateId" class="form-control">
+            <option each="{ k in dictionaries.outer_throat_states }" value="{ k.id }" selected="{ optionSelected(k.id, outerThroatStateId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-8">
+          <label class="control-label">Цервикальный канал проходим для пальца (1п.п до внутреннего зева 1 балл, 1п.п. свободно и &gt; 2 балла)</label>
+          <input type="text" class="form-control" name="channelCervix" placeholder="название пальца" value="{ appointment.channelCervix }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label class="control-label">Плодный пузырь</label>
+          <input type="text" class="form-control" name="fetalBladder" placeholder="текст" value="{ appointment.fetalBladder }">
+        </div>
+        <div class="col-md-2">
+          <label class="control-label">Предлежит</label>
+          <select name="fetalBladderPreviaId" class="form-control">
+            <option each="{ k in dictionaries.fetal_bladder_previas }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.fetalBladderPreviaId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select name="fetalBladderAlignId" class="form-control label-plus">
+            <option each="{ k in dictionaries.fetal_bladder_aligns }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.fetalBladderAlignId) }">{ k.name }</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <label class="control-label">Своды</label>
+          <input type="text" class="form-control" name="arches" placeholder="произвольный текст" value="{ appointment.arches }">
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Диагональная коньюгата более, см.</label>
+          <input type="text" class="form-control" name="conjugate" placeholder="число" value="{ appointment.conjugate }">
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Костный таз</label>
+          <select name="pelvisStateId" class="form-control">
+            <option each="{ k in dictionaries.pelvis_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.pelvisStateId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="control-label">Выделения</label>
+          <input type="text" class="form-control" name="pelvisDischarge" placeholder="произвольный текст" value="{ appointment.pelvisDischarge }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p><strong>Диагноз</strong></p>
+          <textarea class="form-control" rows="2" name="diagnosis" placeholder="произвольный текст" value="{ appointment.diagnosis }"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p><strong>Заключение</strong></p>
+          <textarea class="form-control" rows="3" name="conclusion" placeholder="произвольный текст" value="{ appointment.conclusion }"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">План родов</label>
+          <textarea class="form-control" rows="5" name="birthPlan" placeholder="произвольный текст" value="{ appointment.birthPlan }"></textarea>
+        </div>
+      </div>
+      <br/>
+      <div class="row">
+        <div class="col-md-4 col-md-offset-8">
+          <p class="text-right">
+            <button type="button" class="btn btn-primary" onclick="{ save }">Сохранить</button>
+            <button type="button" class="btn btn-default" onclick="{ cancel }">Отмена</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      let self = this;
+      self.appointment = {};
+      self.dictionaries = {};
+      self.dateReceiptError = false;
+      self.dateReceiptError = false;
+      self.error = null;
+      self.activate = () => {
+          self.error = null;
+          if (self.opts.itemid !== undefined) {
+              dispatcher.trigger(dispatcher.GET_APPOINTMENT,
+                  self.opts.itemid, (dictionaries, appointment, error) => {
+                      console.log('dictionaries', dictionaries);
+                      console.log('appointment', appointment);
+                      console.log('error', error);
+                      self.appointment = deepExtend({}, appointment);
+                      self.dictionaries = deepExtend({}, dictionaries);
+                      if (error != undefined) {
+                          self.error = 'Ошибка при получении данных: ';
+                          if (error.msg) {
+                              self.error += error.msg;
+                          }
+                      }
+                      self.update();
+                  }
+              );
+          } else {
+              dispatcher.trigger(dispatcher.NEW_APPOINTMENT,
+                  (dictionaries, appointment, error) => {
+                      console.log('dictionaries', dictionaries);
+                      console.log('appointment', appointment);
+                      console.log('error', error);
+                      self.appointment = deepExtend({}, appointment);
+                      self.dictionaries = deepExtend({}, dictionaries);
+                      if (error != undefined) {
+                          self.error = 'Ошибка при получении данных: ';
+                          if (error.msg) {
+                              self.error += error.msg;
+                          }
+                      }
+                      self.update();
+                  }
+              );
+          }
+          self.update();
+      }
+      self.passivate = () => {
+          self.appointment = {};
+          self.error = null;
+          self.update();
+      }
+      self.optionSelected = (option_id, appointment_value) => {
+          return option_id == appointment_value;
+      }
+      self.save = () => {
+          self.dateReceiptError = false;
+          self.dateReceiptError = false;
+          if (self.dateReceipt.value == '') {
+              self.dateReceiptError = true;
+          }
+          if (self.patientName.value == '') {
+              self.patientNameError = true;
+          }
+          if (self.dateReceiptError || self.patientNameError) {
+              console.log('has-error', self.dateReceiptError, self.patientNameError);
+              self.update();
+              return;
+          }
+
+          dispatcher.trigger(dispatcher.SAVE_APPOINTMENT, {
+              dateReceipt: self.dateReceipt.value,
+              patientName: self.patientName.value,
+              howReceipt: self.howReceipt.value,
+              alergo: self.alergo.value,
+              contactInfected: self.contactInfected.value,
+              hiv: self.hiv.value,
+              transfusion: self.transfusion.value,
+              dyscountry: self.dyscountry.value,
+              smoking: self.smoking.value,
+              drugs: self.drugs.value,
+              inheritance: self.inheritance.value,
+              diseases: self.diseases.value,
+              gyndiseases: self.gyndiseases.value,
+              paritet: self.paritet.value,
+              pregnancy: self.pregnancy.value,
+              firstTrimester: self.firstTrimester.value,
+              secondTrimester: self.secondTrimester.value,
+              thirdTrimester: self.thirdTrimester.value,
+              history: self.history.value,
+              expByMenstruation: self.expByMenstruation.value,
+              expByFirstVisit: self.expByFirstVisit.value,
+              expByUltra: self.expByUltra.value,
+              healthStateId: self.healthStateId.value,
+              claims: self.claims.value,
+              head: self.head.value,
+              vision: self.vision.value,
+              skinStateId: self.skinStateId.value,
+              lymph: self.lymph.value,
+              breath: self.breath.value,
+              rale: self.rale.value,
+              tones: self.tones.value,
+              pulse: self.pulse.value,
+              pulseType: self.pulseType.value,
+              pressure: self.pressure.value,
+              tongueClean: self.tongueClean.value,
+              tongueWet: self.tongueWet.value,
+              tongueDry: self.tongueDry.value,
+              tongueCoated: self.tongueCoated.value,
+              tongueUncoated: self.tongueUncoated.value,
+              throat: self.throat.value,
+              belly: self.belly.value,
+              peritoneal: self.peritoneal.value,
+              labors: self.labors.value,
+              dysuric: self.dysuric.value,
+              bowel: self.bowel.value,
+              limbSwelling: self.limbSwelling.value,
+              faceSwelling: self.faceSwelling.value,
+              uteruseStateId: self.uteruseStateId.value,
+              fetalPositionId: self.fetalPositionId.value,
+              fetalPreviaId: self.fetalPreviaId.value,
+              fetalAlignId: self.fetalAlignId.value,
+              fetalHeartbeatId: self.fetalHeartbeatId.value,
+              fetalPulse: self.fetalPulse.value,
+              reproductiveDischargeId: self.reproductiveDischargeId.value,
+              vdm: self.vdm.value,
+              oj: self.oj.value,
+              dspin: self.dspin.value,
+              dcrist: self.dcrist.value,
+              dtroch: self.dtroch.value,
+              cext: self.cext.value,
+              develOrgansId: self.develOrgansId.value,
+              genitalAnomalies: self.genitalAnomalies.value,
+              vaginaStateId: self.vaginaStateId.value,
+              lenghtCervix: self.lenghtCervix.value,
+              truncateCervix: self.truncateCervix.value,
+              outerThroatStateId: self.outerThroatStateId.value,
+              channelCervix: self.channelCervix.value,
+              fetalBladder: self.fetalBladder.value,
+              fetalBladderPreviaId: self.fetalBladderPreviaId.value,
+              fetalBladderAlignId: self.fetalBladderAlignId.value,
+              arches: self.arches.value,
+              conjugate: self.conjugate.value,
+              pelvisStateId: self.pelvisStateId.value,
+              pelvisDischarge: self.pelvisDischarge.value,
+              diagnosis: self.diagnosis.value,
+              conclusion: self.conclusion.value,
+              birthPlan: self.birthPlan.value
+          }, (error) => {
+              if (error != undefined) {
+                  self.error = 'Ошибка при сохранении данных: ';
+                  if (error.msg) {
+                      self.error += error.msg;
+                  }
+              }
+              self.update();
+          });
+      }
+      self.cancel = () => {
+      }
+  </script>
+</appointment>

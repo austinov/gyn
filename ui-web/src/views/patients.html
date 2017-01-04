@@ -5,72 +5,79 @@ import dispatcher from '../dispatcher';
 <patients>
   <div class="page-header container-fluid">
     <div class="row">
-      <div if="{ !opts.authorized }" class="col-lg-6">
-        <h3>Please login to view patients</h3>
-      </div>
-    </div>
-    <div class="row">
-        <div if="{ opts.authorized }">
-            <h4>Search of Patients</h4>
-
-      <div class="input-group col-lg-4">
-         <input type="text"
-               name="words"
-               class="form-control"
-               onkeyup="{ searchInputKeyUp }"
-               placeholder="ФИО пациентки">
-        <span class="input-group-btn">
-          <button class="btn btn-default"
-                  type="button"
-                  onclick="{ clear }">&times;</button>
-        </span>
-        <span class="input-group-btn">
-          <a href="javascript:void(0)"
-             class="btn btn-default btn-block"
-             onclick="{ search }">
-            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-          </a>
-          <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-        </span>
-        <span class="input-group-btn">
-          <a href="#reception"
-             class="btn btn-default btn-block btn-receipt">Новый осмотр</a>
-        </span>
-      </div>
-
-            <h4>List of Patients</h4>
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover table-condensed">
-          <tr>
-            <th>Пациент</th>
-            <th>Дата</th>
-            <th>Действия</th>
-          </tr>
-          <tr each="{ patients }">
-            <td>{ name }</td>
-            <td>{ date }</td>
-            <td>
-              <a href="#reception/{ id }/edit">Edit</a>
-              <a href="#reception/{ id }/doc">Doc</a>
-            </td>
-          </tr>
-        </table>
-      </div>
-
-        </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-6">
+      <div class="col-lg-12">
         <error-msg error="{ error }"/>
+      </div>
+    </div>
+    <div class="row">
+      <div if="{ !opts.authorized }" class="col-lg-12">
+        <h4>Для того, чтобы работать со списком пациентов, пожалуйста, войдите в приложение.</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div if="{ opts.authorized }">
+        <h4>Поиск пациентов</h4>
+
+        <div class="input-group col-lg-4">
+           <input type="text"
+                 name="words"
+                 class="form-control"
+                 onkeyup="{ searchInputKeyUp }"
+                 placeholder="ФИО пациентки">
+          <span class="input-group-btn">
+            <button class="btn btn-default"
+                    type="button"
+                    onclick="{ clear }">&times;</button>
+          </span>
+          <span class="input-group-btn">
+            <a href="javascript:void(0)"
+               class="btn btn-default btn-block"
+               onclick="{ search }">
+              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            </a>
+            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+          </span>
+          <span class="input-group-btn">
+            <a href="#appointment"
+               class="btn btn-default btn-block btn-receipt">Новый осмотр</a>
+          </span>
+        </div>
+
+        <h4>Найденные пациенты</h4>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-condensed">
+            <tr>
+              <th>Пациент</th>
+              <th>Дата</th>
+              <th>Действия</th>
+            </tr>
+            <tr each="{ patients }">
+              <td>{ name }</td>
+              <td>{ date }</td>
+              <td>
+                <a href="#appointment/{ id }/edit">Edit</a>
+                <a href="#appointment/{ id }/doc">Doc</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>
   <script>
       let self = this;
       self.patients = [];
-      let onSearchPatientsChanged = (patients) => {
+      self.error = null;
+      let onSearchPatientsChanged = (patients, error) => {
           console.log('onSearchPatientsChanged', patients);
           self.patients = patients;
+          if (error != undefined) {
+              self.error = 'Ошибка при поиске пациентов: ';
+              if (error.msg) {
+                  self.error += error.msg;
+              }
+          }
           self.update();
       }
       self.searchInputKeyUp = (e) => {
@@ -93,11 +100,9 @@ import dispatcher from '../dispatcher';
           self.search();
       }
       self.activate = () => {
-          console.log('=== in patients activate');
           dispatcher.on(dispatcher.SEARCH_PATIENTS_CHANGED, onSearchPatientsChanged);
       }
       self.passivate = () => {
-          console.log('=== in patients passivate');
           dispatcher.off(dispatcher.SEARCH_PATIENTS_CHANGED, onSearchPatientsChanged);
       }
   </script>

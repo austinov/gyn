@@ -10,11 +10,11 @@ import dispatcher from '../dispatcher'
   <dlg-login></dlg-login>
 
   <pages id="pages" default="patients">
-    <page name="patients" caption="Patients">
+    <page name="patients" caption="Пациенты">
       <patients authorized="{ parent.parent.user.authorized }"></patients>
     </page>
-    <page name="reception" caption="Reception">
-      <reception authorized="{ parent.parent.user.authorized }"></reception>
+    <page name="appointment" caption="Осмотры">
+      <appointment authorized="{ parent.parent.user.authorized }"></appointment>
     </page>
   </pages>
 

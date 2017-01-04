@@ -1,8 +1,8 @@
 'use strict';
 
 import dispatcher from '../dispatcher';
-import _fetch from '../util/fetch';
-import respHelper from '../util/response-helper';
+import _fetch from '../utils/fetch';
+import respHelper from '../utils/response-helper';
 import cookies from 'cookie';
 
 dispatcher.on(dispatcher.TRY_LOGIN, _login);
@@ -13,9 +13,11 @@ function _login() {
 }
 
 const authCookieName = 'X-App-Auth';
+const userName = 'userName';
 
 function _logout() {
     document.cookie = cookies.serialize(authCookieName, "", {expires: new Date(0)});
+    localStorage.removeItem(userName);
     dispatcher.trigger(
         dispatcher.PROFILE_CHANGED, {
             login: '',
@@ -38,6 +40,7 @@ function _logout() {
                     console.log(error);
                 } else {
                     data.authorized = true;
+                    localStorage.setItem(userName, data.username);
                     dispatcher.trigger(dispatcher.PROFILE_CHANGED, data);
                 }
             })
