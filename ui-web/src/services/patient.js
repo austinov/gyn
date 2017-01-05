@@ -81,7 +81,6 @@ function _getAppointment(id, cb) {
             }
         })
         .catch(e => {
-            console.log('Errorroorr', e);
             cb({}, {}, e);
         });
         /*
@@ -118,7 +117,28 @@ function _saveAppointment(data, cb) {
     // TODO
     if (cb) {
         console.log('save', data);
-        cb('error msg');
+        _fetch.fetch('/api/appointment', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(r => {
+console.log('>>>>', r);
+                return respHelper.handleStatus(r);
+            })
+            .then(data => {
+console.log('####', data);
+                const {error} = data;
+                if (error) {
+                    console.log(error);
+                }
+                cb(error);
+            })
+            .catch(e => {
+                cb(e);
+            });
     }
 }
 
@@ -147,6 +167,8 @@ function _getDefaultData() {
         throat: 'чистый',
         peritoneal: 'отрицательные',
         labors: 'abs',
+        dysuric: false,
+        bowel: true,
         arches: 'свободные',
         birthPlan: birthPlan
     }

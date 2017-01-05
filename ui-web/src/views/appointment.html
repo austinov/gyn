@@ -23,7 +23,7 @@ import deepExtend from 'deep-extend';
           <input type="date" class="form-control" name="dateReceipt" placeholder="mm/dd/yyyy" value="{ appointment.dateReceipt }">
         </div>
         <div class="{ col-md-5: true, has-error: patientNameError }">
-          <label class="control-label">ФИО</label>
+          <label class="control-label">ФИО пациента</label>
           <input type="text" class="form-control" name="patientName" placeholder="Фамилия Имя Отчество" value="{ appointment.patientName }">
         </div>
         <div class="col-md-5">
@@ -241,15 +241,15 @@ import deepExtend from 'deep-extend';
         <div class="col-md-2">
           <label class="control-label">Дизурические явления</label>
           <div>
-            <label class="radio-inline"><input type="radio" name="dysuric" value="0" checked>нет</label>
-            <label class="radio-inline"><input type="radio" name="dysuric" value="1">есть</label>
+            <label class="radio-inline"><input type="radio" id="dysuricFalse" name="dysuric" value="0" checked="{ optionSelected(appointment.dysuric, false) }">нет</label>
+            <label class="radio-inline"><input type="radio" id="dysuricTrue" name="dysuric" value="1" checked="{ optionSelected(appointment.dysuric, true) }">есть</label>
           </div>
         </div>
         <div class="col-md-4">
           <label class="control-label">Стул</label>
           <div>
-            <label class="radio-inline"><input type="radio" name="bowel" value="1" checked>регулярный</label>
-            <label class="radio-inline"><input type="radio" name="bowel" value="0">не регулярный</label>
+            <label class="radio-inline"><input type="radio" id="bowelTrue" name="bowel" value="1" checked="{ optionSelected(appointment.bowel, true) }">регулярный</label>
+            <label class="radio-inline"><input type="radio" id="bowelFalse" name="bowel" value="0" checked="{ optionSelected(appointment.bowel, false) }">не регулярный</label>
           </div>
         </div>
       </div>
@@ -512,7 +512,7 @@ import deepExtend from 'deep-extend';
       }
       self.save = () => {
           self.dateReceiptError = false;
-          self.dateReceiptError = false;
+          self.patientNameError = false;
           if (self.dateReceipt.value == '') {
               self.dateReceiptError = true;
           }
@@ -520,13 +520,13 @@ import deepExtend from 'deep-extend';
               self.patientNameError = true;
           }
           if (self.dateReceiptError || self.patientNameError) {
-              console.log('has-error', self.dateReceiptError, self.patientNameError);
+              scrollTo(0, 0);
+              alert('Проверьте правильность ввода данных в полях "Дата приёма", "ФИО пациента"');
               self.update();
               return;
           }
-
           dispatcher.trigger(dispatcher.SAVE_APPOINTMENT, {
-              dateReceipt: self.dateReceipt.value,
+              dateReceipt: Date.parse(self.dateReceipt.value)/1000,
               patientName: self.patientName.value,
               howReceipt: self.howReceipt.value,
               alergo: self.alergo.value,
@@ -548,11 +548,11 @@ import deepExtend from 'deep-extend';
               expByMenstruation: self.expByMenstruation.value,
               expByFirstVisit: self.expByFirstVisit.value,
               expByUltra: self.expByUltra.value,
-              healthStateId: self.healthStateId.value,
+              healthStateId: parseInt(self.healthStateId.value),
               claims: self.claims.value,
               head: self.head.value,
               vision: self.vision.value,
-              skinStateId: self.skinStateId.value,
+              skinStateId: parseInt(self.skinStateId.value),
               lymph: self.lymph.value,
               breath: self.breath.value,
               rale: self.rale.value,
@@ -560,45 +560,45 @@ import deepExtend from 'deep-extend';
               pulse: self.pulse.value,
               pulseType: self.pulseType.value,
               pressure: self.pressure.value,
-              tongueClean: self.tongueClean.value,
-              tongueWet: self.tongueWet.value,
-              tongueDry: self.tongueDry.value,
-              tongueCoated: self.tongueCoated.value,
-              tongueUncoated: self.tongueUncoated.value,
+              tongueClean: self.tongueClean.checked,
+              tongueWet: self.tongueWet.checked,
+              tongueDry: self.tongueDry.checked,
+              tongueCoated: self.tongueCoated.checked,
+              tongueUncoated: self.tongueUncoated.checked,
               throat: self.throat.value,
               belly: self.belly.value,
               peritoneal: self.peritoneal.value,
               labors: self.labors.value,
-              dysuric: self.dysuric.value,
-              bowel: self.bowel.value,
+              dysuric: document.getElementById('dysuricTrue').checked,
+              bowel: document.getElementById('bowelTrue').checked,
               limbSwelling: self.limbSwelling.value,
               faceSwelling: self.faceSwelling.value,
-              uteruseStateId: self.uteruseStateId.value,
-              fetalPositionId: self.fetalPositionId.value,
-              fetalPreviaId: self.fetalPreviaId.value,
-              fetalAlignId: self.fetalAlignId.value,
-              fetalHeartbeatId: self.fetalHeartbeatId.value,
+              uteruseStateId: parseInt(self.uteruseStateId.value),
+              fetalPositionId: parseInt(self.fetalPositionId.value),
+              fetalPreviaId: parseInt(self.fetalPreviaId.value),
+              fetalAlignId: parseInt(self.fetalAlignId.value),
+              fetalHeartbeatId: parseInt(self.fetalHeartbeatId.value),
               fetalPulse: self.fetalPulse.value,
-              reproductiveDischargeId: self.reproductiveDischargeId.value,
+              reproductiveDischargeId: parseInt(self.reproductiveDischargeId.value),
               vdm: self.vdm.value,
               oj: self.oj.value,
               dspin: self.dspin.value,
               dcrist: self.dcrist.value,
               dtroch: self.dtroch.value,
               cext: self.cext.value,
-              develOrgansId: self.develOrgansId.value,
+              develOrgansId: parseInt(self.develOrgansId.value),
               genitalAnomalies: self.genitalAnomalies.value,
-              vaginaStateId: self.vaginaStateId.value,
+              vaginaStateId: parseInt(self.vaginaStateId.value),
               lenghtCervix: self.lenghtCervix.value,
               truncateCervix: self.truncateCervix.value,
-              outerThroatStateId: self.outerThroatStateId.value,
+              outerThroatStateId: parseInt(self.outerThroatStateId.value),
               channelCervix: self.channelCervix.value,
               fetalBladder: self.fetalBladder.value,
-              fetalBladderPreviaId: self.fetalBladderPreviaId.value,
-              fetalBladderAlignId: self.fetalBladderAlignId.value,
+              fetalBladderPreviaId: parseInt(self.fetalBladderPreviaId.value),
+              fetalBladderAlignId: parseInt(self.fetalBladderAlignId.value),
               arches: self.arches.value,
               conjugate: self.conjugate.value,
-              pelvisStateId: self.pelvisStateId.value,
+              pelvisStateId: parseInt(self.pelvisStateId.value),
               pelvisDischarge: self.pelvisDischarge.value,
               diagnosis: self.diagnosis.value,
               conclusion: self.conclusion.value,
