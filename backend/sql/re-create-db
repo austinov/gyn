@@ -11,4 +11,7 @@ createdb gyn
 
 # create tables
 
-psql -d gyn -f ./create-tables.sql
+pushd "$(dirname "$(readlink -f "$BASH_SOURCE[0]")")" > /dev/null && {
+  psql -d gyn -f ./create-tables.sql
+  popd > /dev/null
+}

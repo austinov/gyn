@@ -176,7 +176,7 @@ INSERT INTO pelvis_states (name) VALUES ('без экзостозов'), ('эк�
 
 CREATE TABLE IF NOT EXISTS appointments (
     "id"                        serial primary key,
-    "date"                      bigint,
+    "date_receipt"              bigint,
     "doctor_id"                 integer,
     "patient_id"                integer,
     "how_receipt"               varchar(100),
@@ -257,7 +257,7 @@ CREATE TABLE IF NOT EXISTS appointments (
 );
 
 COMMENT ON TABLE appointments IS 'Осмотры пациентов';
-COMMENT ON COLUMN appointments.date IS 'Дата приёма, Unix timestamp in seconds';
+COMMENT ON COLUMN appointments.date_receipt IS 'Дата приёма, Unix timestamp in seconds';
 COMMENT ON COLUMN appointments.doctor_id IS 'Дежурный врач акушер-гинеколог';
 COMMENT ON COLUMN appointments.patient_id IS 'Пациент';
 COMMENT ON COLUMN appointments.how_receipt IS 'Поступила';
@@ -337,7 +337,7 @@ COMMENT ON COLUMN appointments.conclusion IS 'Заключение';
 COMMENT ON COLUMN appointments.birth_plan IS 'План родов';
 
 CREATE INDEX ind_appointments_id ON appointments USING btree (id);
-CREATE INDEX ind_appointments_date ON appointments USING btree (date);
+CREATE INDEX ind_appointments_date ON appointments USING btree (date_receipt);
 CREATE INDEX ind_appointments_doctor_id ON appointments USING btree (doctor_id);
 CREATE INDEX ind_appointments_patient_id ON appointments USING btree (patient_id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_doctor FOREIGN KEY (doctor_id) REFERENCES users (id);

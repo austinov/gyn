@@ -1,18 +1,19 @@
 package store
 
 type Profile struct {
+	Id       int64  `json:"-"`
 	Login    string `json:"login"`
 	UserName string `json:"username"`
 }
 
 type Dictionary struct {
-	Id   int    `json:"id"`
+	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
 type Appointment struct {
 	Id                      int64  `json:"id"`
-	Date                    int64  `json:"date"`
+	DateReceipt             int64  `json:"dateReceipt"`
 	DoctorId                int64  `json:"doctorId"`
 	DoctorName              string `json:"doctorName"`
 	PatientId               int64  `json:"patientId"`

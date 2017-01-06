@@ -8,7 +8,9 @@ import (
 
 func initAPI(e *echo.Echo, h handler.Handler) {
 	e.POST("/api/login", h.Login)
-	e.GET("/api/profile", h.Profile, tokenMiddleware(config.Get()))
-	e.GET("/api/dictionaries", h.Dictionaries, tokenMiddleware(config.Get()))
-	e.GET("/api/appointment/:id", h.Appointment, tokenMiddleware(config.Get()))
+	e.GET("/api/profile", h.GetProfile, tokenMiddleware(config.Get()))
+	e.GET("/api/dictionaries", h.GetDictionaries, tokenMiddleware(config.Get()))
+	e.POST("/api/appointments", h.SearchAppointments, tokenMiddleware(config.Get()))
+	e.PUT("/api/appointment", h.SaveAppointment, tokenMiddleware(config.Get()))
+	e.GET("/api/appointment/:id", h.GetAppointment, tokenMiddleware(config.Get()))
 }
