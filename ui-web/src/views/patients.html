@@ -1,6 +1,7 @@
 'use strict';
 
 import dispatcher from '../dispatcher';
+import date from '../utils/date';
 
 <patients>
   <div class="page-header container-fluid">
@@ -16,11 +17,11 @@ import dispatcher from '../dispatcher';
     </div>
     <div class="row">
       <div if="{ opts.authorized }">
-        <h4>Поиск пациентов</h4>
+        <h4>Поиск осмотров пациентов</h4>
 
-        <div class="input-group col-lg-4">
+        <div class="input-group col-lg-8">
            <input type="text"
-                 name="words"
+                 name="patientName"
                  class="form-control"
                  onkeyup="{ searchInputKeyUp }"
                  placeholder="ФИО пациентки">
@@ -43,17 +44,19 @@ import dispatcher from '../dispatcher';
           </span>
         </div>
 
-        <h4>Найденные пациенты</h4>
+        <h4>Найденные осмотры пациентов</h4>
         <div class="table-responsive">
           <table class="table table-bordered table-hover table-condensed">
             <tr>
-              <th>Пациент</th>
               <th>Дата</th>
+              <th>Пациент</th>
+              <th>Доктор</th>
               <th>Действия</th>
             </tr>
-            <tr each="{ patients }">
-              <td>{ name }</td>
-              <td>{ date }</td>
+            <tr each="{ appointments }">
+              <td>{ parseDate(dateReceipt) }</td>
+              <td>{ patientName }</td>
+              <td>{ doctorName }</td>
               <td>
                 <a href="#appointment/{ id }/edit">Edit</a>
                 <a href="#appointment/{ id }/doc">Doc</a>
@@ -67,19 +70,8 @@ import dispatcher from '../dispatcher';
   </div>
   <script>
       let self = this;
-      self.patients = [];
+      self.appointments = [];
       self.error = null;
-      let onSearchPatientsChanged = (patients, error) => {
-          console.log('onSearchPatientsChanged', patients);
-          self.patients = patients;
-          if (error != undefined) {
-              self.error = 'Ошибка при поиске пациентов: ';
-              if (error.msg) {
-                  self.error += error.msg;
-              }
-          }
-          self.update();
-      }
       self.searchInputKeyUp = (e) => {
           switch (e.which) {
           case 27:
@@ -91,19 +83,27 @@ import dispatcher from '../dispatcher';
           }
       }
       self.search = () => {
-          dispatcher.trigger(dispatcher.SEARCH_PATIENTS, {
-              words: 'Some words'
+          self.error = null;
+          dispatcher.trigger(dispatcher.SEARCH_APPOINTMENTS, {
+              patientName: self.patientName.value
+          }, (appointments, e) => {
+            self.appointments = appointments;
+            if (e != undefined) {
+                self.error = 'Ошибка при поиске пациентов: ';
+                if (e.msg) {
+                    self.error += e.msg;
+                }
+                alert(self.error);
+            }
+            self.update();
           });
       }
       self.clear = () => {
-          self.words.value = '';
+          self.patientName.value = '';
           self.search();
       }
-      self.activate = () => {
-          dispatcher.on(dispatcher.SEARCH_PATIENTS_CHANGED, onSearchPatientsChanged);
-      }
-      self.passivate = () => {
-          dispatcher.off(dispatcher.SEARCH_PATIENTS_CHANGED, onSearchPatientsChanged);
+      self.parseDate = (ts) => {
+          return date.parseForView(ts);
       }
   </script>
 </patients>

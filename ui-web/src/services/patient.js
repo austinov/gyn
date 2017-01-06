@@ -3,35 +3,45 @@
 import dispatcher from '../dispatcher';
 import _fetch from '../utils/fetch';
 import respHelper from '../utils/response-helper';
+//import date from '../utils/date';
 
-dispatcher.on(dispatcher.SEARCH_PATIENTS, (params) => {
-	_searchPatients(params);
-});
-
+dispatcher.on(dispatcher.SEARCH_APPOINTMENTS, _searchAppointments);
 dispatcher.on(dispatcher.NEW_APPOINTMENT, _newAppointment);
 dispatcher.on(dispatcher.GET_APPOINTMENT, _getAppointment);
 dispatcher.on(dispatcher.SAVE_APPOINTMENT, _saveAppointment);
 
-function _searchPatients(params) {
-    // TODO fetch
-	console.log('_searchPatients', params);
-    dispatcher.trigger(dispatcher.SEARCH_PATIENTS_CHANGED, [
-        {
-            id: 111,
-            name: 'Иванова Мария Ивановна',
-            date: '01.12.2016',
-        },
-        {
-            id: 222,
-            name: 'Петрова Ольга Васильевна',
-            date: '02.12.2016',
-        },
-        {
-            id: 333,
-            name: 'Сидорова Светлана Николаевна',
-            date: '03.12.2016',
-        },
-    ]);
+function _searchAppointments(params, cb) {
+    // TODO dateReceipt
+	console.log('_searchAppointments', params);
+    if (cb) {
+        _fetch.fetch('/api/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(params)
+            })
+            .then(r => {
+                return respHelper.handleStatus(r);
+            })
+            .then(data => {
+                const {error} = data;
+                if (error) {
+                    console.log(error);
+                }
+                cb(data, error);
+            })
+            .catch(e => {
+                console.log(e);
+                if (e.error === 'AUTH') {
+                    alert('Ошибка проверки пользователя.\nПопробуйте выйти/войти в приложение.');
+                    _logout();
+                    dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
+                } else {
+                    cb([], e);
+                }
+            });
+    }
 }
 
 function _newAppointment(cb) {
@@ -65,20 +75,21 @@ function _getAppointment(id, cb) {
             _fetch.fetch('/api/dictionaries'),
             _fetch.fetch('/api/appointment/' + id)
         ])
-        .then(responses => {
+        .then(r => {
             return Promise.all([
-                    respHelper.handleStatus(responses[0]),
-                    respHelper.handleStatus(responses[1])]);
+                    respHelper.handleStatus(r[0]),
+                    respHelper.handleStatus(r[1])]);
         })
-        .then(data => {
-            let obj1 = data[0],
-                obj2 = data[1];
-            console.log('====.1', obj1);
-            console.log('====.2', obj2);
-            const {error} = obj2;
+        .then(resp => {
+            let dict = resp[0],
+                data = resp[1];
+            console.log('====.1', dict);
+            console.log('====.2', data);
+            const {error} = data;
             if (error) {
                  console.log('>>>> Error', error);
             }
+            cb(dict, data, error);
         })
         .catch(e => {
             cb({}, {}, e);
@@ -114,9 +125,7 @@ function _getAppointment(id, cb) {
 }
 
 function _saveAppointment(data, cb) {
-    // TODO
     if (cb) {
-        console.log('save', data);
         _fetch.fetch('/api/appointment', {
                 method: 'PUT',
                 headers: {
@@ -125,19 +134,26 @@ function _saveAppointment(data, cb) {
                 body: JSON.stringify(data)
             })
             .then(r => {
-console.log('>>>>', r);
                 return respHelper.handleStatus(r);
             })
-            .then(data => {
-console.log('####', data);
-                const {error} = data;
+            .then(resp => {
+                const {error} = resp;
                 if (error) {
                     console.log(error);
+                } else {
+                    data.id = resp.id;
                 }
-                cb(error);
+                cb(data.id, error);
             })
             .catch(e => {
-                cb(e);
+                console.log(e);
+                if (e.error === 'AUTH') {
+                    alert('Ошибка проверки пользователя при сохранении данных.\nПопробуйте выйти/войти в приложение.');
+                    _logout();
+                    dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
+                } else {
+                    cb(null, e);
+                }
             });
     }
 }
@@ -150,7 +166,7 @@ function _getDefaultData() {
     birthPlan += '- функциональная оценка таза\n';
     birthPlan += '- в случае функционального ухудшения плода или отклонении от нормального течения родов своевременно решить вопрос об оперативном родоразрешении';
     return {
-        dateReceipt: _getToday(),
+        dateReceipt: new Date()/1000,
         doctorName: localStorage.getItem(userName),
         howReceipt: 'самотеком',
         alergo: 'отр',
@@ -172,18 +188,4 @@ function _getDefaultData() {
         arches: 'свободные',
         birthPlan: birthPlan
     }
-}
-
-function _getToday() {
-  let today = new Date();
-  let dd = today.getDate();
-  let mm = today.getMonth()+1; //January is 0!
-  let yyyy = today.getFullYear();
-  if(dd<10) {
-      dd = '0' + dd
-  } 
-  if(mm < 10) {
-      mm = '0' + mm
-  } 
-  return yyyy + '-' + mm +'-' + dd;
 }

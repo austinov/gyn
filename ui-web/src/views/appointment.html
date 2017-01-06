@@ -2,6 +2,7 @@
 
 import dispatcher from '../dispatcher';
 import deepExtend from 'deep-extend';
+import date from '../utils/date';
 
 <appointment>
   <div class="page-header container-fluid">
@@ -20,7 +21,7 @@ import deepExtend from 'deep-extend';
       <div class="row">
         <div class="{ col-md-2: true, has-error: dateReceiptError }">
           <label class="control-label">Дата приёма (mm/dd/yyyy)</label>
-          <input type="date" class="form-control" name="dateReceipt" placeholder="mm/dd/yyyy" value="{ appointment.dateReceipt }">
+          <input type="date" class="form-control" name="dateReceipt" placeholder="mm/dd/yyyy" value="{ parseDate(appointment.dateReceipt) }">
         </div>
         <div class="{ col-md-5: true, has-error: patientNameError }">
           <label class="control-label">ФИО пациента</label>
@@ -510,7 +511,11 @@ import deepExtend from 'deep-extend';
       self.optionSelected = (option_id, appointment_value) => {
           return option_id == appointment_value;
       }
+      self.parseDate = (ts) => {
+          return date.parseForInput(ts);
+      }
       self.save = () => {
+          self.error = null;
           self.dateReceiptError = false;
           self.patientNameError = false;
           if (self.dateReceipt.value == '') {
@@ -526,6 +531,7 @@ import deepExtend from 'deep-extend';
               return;
           }
           dispatcher.trigger(dispatcher.SAVE_APPOINTMENT, {
+              id: self.appointment.id,
               dateReceipt: Date.parse(self.dateReceipt.value)/1000,
               patientName: self.patientName.value,
               howReceipt: self.howReceipt.value,
@@ -603,12 +609,15 @@ import deepExtend from 'deep-extend';
               diagnosis: self.diagnosis.value,
               conclusion: self.conclusion.value,
               birthPlan: self.birthPlan.value
-          }, (error) => {
-              if (error != undefined) {
+          }, (id, e) => {
+              if (e != undefined) {
                   self.error = 'Ошибка при сохранении данных: ';
-                  if (error.msg) {
-                      self.error += error.msg;
+                  if (e.msg) {
+                      self.error += e.msg;
                   }
+                  alert(self.error);
+              } else {
+                  self.appointment.id = id;
               }
               self.update();
           });
