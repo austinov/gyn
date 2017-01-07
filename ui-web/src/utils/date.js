@@ -2,7 +2,7 @@
 
 module.exports = {
 
-    parseForInput: (ts) => {
+    parse: (ts, format) => {
         if (ts == undefined || ts == null) {
             return '';
         }
@@ -16,23 +16,11 @@ module.exports = {
         if (mm < 10) {
             mm = '0' + mm
         }
-        return yyyy + '-' + mm +'-' + dd;
-    },
-
-    parseForView: (ts) => {
-        if (ts == undefined || ts == null) {
-            return '';
+        switch (format) {
+            case 'input':
+                return yyyy + '-' + mm +'-' + dd;
+            default:
+                return dd + '-' + mm + '-' + yyyy;
         }
-        let date = new Date(ts*1000);
-        let dd = date.getDate();
-        let mm = date.getMonth()+1;
-        let yyyy = date.getFullYear();
-        if (dd < 10) {
-            dd = '0' + dd
-        }
-        if (mm < 10) {
-            mm = '0' + mm
-        } 
-        return dd + '-' + mm + '-' + yyyy;
-      }
+    }
 };

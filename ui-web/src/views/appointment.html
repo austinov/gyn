@@ -45,7 +45,7 @@ import date from '../utils/date';
       <div class="row">
         <div class="col-md-6">
           <label class="control-label">Контакт с инфекционными больными</label>
-          <input type="text" class="form-control" name="contactInfected" placeholder="произвольный текст" value="{ appointment.contactInfectied }">
+          <input type="text" class="form-control" name="contactInfected" placeholder="произвольный текст" value="{ appointment.contactInfected }">
         </div>
         <div class="col-md-6">
           <label class="control-label">Малярия, туберкулез, гепатиты, ВИЧ</label>
@@ -210,11 +210,11 @@ import date from '../utils/date';
         <div class="col-md-5">
           <label class="control-label">Язык</label>
           <div>
-            <label class="checkbox-inline"><input type="checkbox" name="tongueClean" value="{ appointment.tongueClean }">чистый</label>
-            <label class="checkbox-inline"><input type="checkbox" name="tongueWet" value="{ appointment.tongueWet }">влажный</label>
-            <label class="checkbox-inline"><input type="checkbox" name="tongueDry" value="{ appointment.tongueDry }">сухой</label>
-            <label class="checkbox-inline"><input type="checkbox" name="tongueCoated" value="{ appointment.tongueCoated }">обложен</label>
-            <label class="checkbox-inline"><input type="checkbox" name="tongueUncoated" value="{ appointment.tongueUncoated }">не обложен</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueClean" value="{ appointment.tongueClean }" checked="{ appointment.tongueClean }">чистый</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueWet" value="{ appointment.tongueWet }" checked="{ appointment.tongueWet}">влажный</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueDry" value="{ appointment.tongueDry }" checked="{ appointment.tongueDry }">сухой</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueCoated" value="{ appointment.tongueCoated }" checked="{ appointment.tongueCoated }">обложен</label>
+            <label class="checkbox-inline"><input type="checkbox" name="tongueUncoated" value="{ appointment.tongueUncoated }" checked="{ appointment.tongueUncoated }">не обложен</label>
           </div>
         </div>
         <div class="col-md-7">
@@ -383,7 +383,7 @@ import date from '../utils/date';
         <div class="col-md-4">
           <label class="control-label">Наружний зев</label>
           <select name="outerThroatStateId" class="form-control">
-            <option each="{ k in dictionaries.outer_throat_states }" value="{ k.id }" selected="{ optionSelected(k.id, outerThroatStateId) }">{ k.name }</option>
+            <option each="{ k in dictionaries.outer_throat_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.outerThroatStateId) }">{ k.name }</option>
           </select>
         </div>
         <div class="col-md-8">
@@ -464,44 +464,24 @@ import date from '../utils/date';
       self.dateReceiptError = false;
       self.dateReceiptError = false;
       self.error = null;
+      let onGetData = (dictionaries, appointment, e) => {
+          self.appointment = deepExtend({}, appointment);
+          self.dictionaries = deepExtend({}, dictionaries);
+          if (e != undefined) {
+              self.error = 'Ошибка при получении данных: ';
+              if (e.msg) {
+                  self.error += e.msg;
+              }
+          }
+          self.update();
+      };
       self.activate = () => {
           self.error = null;
           if (self.opts.itemid !== undefined) {
-              dispatcher.trigger(dispatcher.GET_APPOINTMENT,
-                  self.opts.itemid, (dictionaries, appointment, error) => {
-                      console.log('dictionaries', dictionaries);
-                      console.log('appointment', appointment);
-                      console.log('error', error);
-                      self.appointment = deepExtend({}, appointment);
-                      self.dictionaries = deepExtend({}, dictionaries);
-                      if (error != undefined) {
-                          self.error = 'Ошибка при получении данных: ';
-                          if (error.msg) {
-                              self.error += error.msg;
-                          }
-                      }
-                      self.update();
-                  }
-              );
+              dispatcher.trigger(dispatcher.GET_APPOINTMENT, self.opts.itemid, onGetData);
           } else {
-              dispatcher.trigger(dispatcher.NEW_APPOINTMENT,
-                  (dictionaries, appointment, error) => {
-                      console.log('dictionaries', dictionaries);
-                      console.log('appointment', appointment);
-                      console.log('error', error);
-                      self.appointment = deepExtend({}, appointment);
-                      self.dictionaries = deepExtend({}, dictionaries);
-                      if (error != undefined) {
-                          self.error = 'Ошибка при получении данных: ';
-                          if (error.msg) {
-                              self.error += error.msg;
-                          }
-                      }
-                      self.update();
-                  }
-              );
+              dispatcher.trigger(dispatcher.NEW_APPOINTMENT, onGetData);
           }
-          self.update();
       }
       self.passivate = () => {
           self.appointment = {};
@@ -512,7 +492,7 @@ import date from '../utils/date';
           return option_id == appointment_value;
       }
       self.parseDate = (ts) => {
-          return date.parseForInput(ts);
+          return date.parse(ts, 'input');
       }
       self.save = () => {
           self.error = null;
@@ -617,12 +597,15 @@ import date from '../utils/date';
                   }
                   alert(self.error);
               } else {
+                  // TODO show customized window
+                  alert('Данные успешно сохранены.');
                   self.appointment.id = id;
               }
               self.update();
           });
       }
       self.cancel = () => {
+          window.location = '/';
       }
   </script>
 </appointment>

@@ -43,8 +43,7 @@ import date from '../utils/date';
                class="btn btn-default btn-block btn-receipt">Новый осмотр</a>
           </span>
         </div>
-
-        <h4>Найденные осмотры пациентов</h4>
+        <br/>
         <div class="table-responsive">
           <table class="table table-bordered table-hover table-condensed">
             <tr>
@@ -72,6 +71,11 @@ import date from '../utils/date';
       let self = this;
       self.appointments = [];
       self.error = null;
+      self.activate = () => {
+          self.search();
+      }
+      self.passivate = () => {
+      }
       self.searchInputKeyUp = (e) => {
           switch (e.which) {
           case 27:
@@ -103,7 +107,7 @@ import date from '../utils/date';
           self.search();
       }
       self.parseDate = (ts) => {
-          return date.parseForView(ts);
+          return date.parse(ts);
       }
   </script>
 </patients>

@@ -3,7 +3,6 @@
 import dispatcher from '../dispatcher';
 import _fetch from '../utils/fetch';
 import respHelper from '../utils/response-helper';
-//import date from '../utils/date';
 
 dispatcher.on(dispatcher.SEARCH_APPOINTMENTS, _searchAppointments);
 dispatcher.on(dispatcher.NEW_APPOINTMENT, _newAppointment);
@@ -11,8 +10,6 @@ dispatcher.on(dispatcher.GET_APPOINTMENT, _getAppointment);
 dispatcher.on(dispatcher.SAVE_APPOINTMENT, _saveAppointment);
 
 function _searchAppointments(params, cb) {
-    // TODO dateReceipt
-	console.log('_searchAppointments', params);
     if (cb) {
         _fetch.fetch('/api/appointments', {
                 method: 'POST',
@@ -32,14 +29,9 @@ function _searchAppointments(params, cb) {
                 cb(data, error);
             })
             .catch(e => {
-                console.log(e);
-                if (e.error === 'AUTH') {
-                    alert('Ошибка проверки пользователя.\nПопробуйте выйти/войти в приложение.');
-                    _logout();
-                    dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
-                } else {
+                _catchError(e, () => {
                     cb([], e);
-                }
+                });
             });
     }
 }
@@ -59,17 +51,12 @@ function _newAppointment(cb) {
                 }
             })
             .catch(e => {
-                console.log(e);
-                if (e.error === 'AUTH') {
-                    _logout();
-                    dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
-                }
+                _catchError(e);
             });
     }
 }
 
 function _getAppointment(id, cb) {
-    // TODO fetch
     if (cb) {
         Promise.all([
             _fetch.fetch('/api/dictionaries'),
@@ -83,44 +70,17 @@ function _getAppointment(id, cb) {
         .then(resp => {
             let dict = resp[0],
                 data = resp[1];
-            console.log('====.1', dict);
-            console.log('====.2', data);
             const {error} = data;
             if (error) {
-                 console.log('>>>> Error', error);
+                 console.log(error);
             }
             cb(dict, data, error);
         })
         .catch(e => {
-            cb({}, {}, e);
-        });
-        /*
-        _fetch.fetch('/api/dictionaries')
-            .then(r => {
-                return respHelper.handleStatus(r);
-            })
-            .then(data => {
-                const {error} = data;
-                if (error) {
-                    console.log(error);
-                } else {
-                   // TODO patient data
-                   cb(data, {
-                        id: id,
-                        name: 'Иванова Мария Ивановна',
-                        health_state_id: 3,
-                        skin_state_id: 2
-                   });
-                }
-            })
-            .catch(e => {
-                console.log(e);
-                if (e.error === 'AUTH') {
-                    _logout();
-                    dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
-                }
+            _catchError(e, () => {
+                cb({}, {}, e);
             });
-        */
+        });
     }
 }
 
@@ -146,14 +106,9 @@ function _saveAppointment(data, cb) {
                 cb(data.id, error);
             })
             .catch(e => {
-                console.log(e);
-                if (e.error === 'AUTH') {
-                    alert('Ошибка проверки пользователя при сохранении данных.\nПопробуйте выйти/войти в приложение.');
-                    _logout();
-                    dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
-                } else {
-                    cb(null, e);
-                }
+                _catchError(e, () => {
+                    cb([], e);
+                });
             });
     }
 }
@@ -170,7 +125,7 @@ function _getDefaultData() {
         doctorName: localStorage.getItem(userName),
         howReceipt: 'самотеком',
         alergo: 'отр',
-        contactInfectied: 'отр',
+        contactInfected: 'отр',
         hiv: 'отр',
         transfusion: 'отр',
         dyscountry: 'отр',
@@ -187,5 +142,15 @@ function _getDefaultData() {
         bowel: true,
         arches: 'свободные',
         birthPlan: birthPlan
+    }
+}
+
+function _catchError(e, cb) {
+    console.log(e);
+    if (e.error === 'AUTH') {
+        alert('Ошибка проверки пользователя.\nПопробуйте выйти/войти в приложение и повторить действие.');
+        dispatcher.trigger(dispatcher.RE_LOGIN, {});
+    } else if (cb) {
+        cb();
     }
 }

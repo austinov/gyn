@@ -6,6 +6,7 @@ import respHelper from '../utils/response-helper';
 import cookies from 'cookie';
 
 dispatcher.on(dispatcher.TRY_LOGIN, _login);
+dispatcher.on(dispatcher.RE_LOGIN, _relogin);
 dispatcher.on(dispatcher.DO_LOGOUT, _logout);
 
 function _login() {
@@ -24,6 +25,11 @@ function _logout() {
             username: '',
             authorized: false
         });
+}
+
+function _relogin() {
+    _logout();
+    dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
 }
 
 (window.onpopstate = function () {
