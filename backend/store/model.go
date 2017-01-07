@@ -20,7 +20,7 @@ type Appointment struct {
 	PatientName             string `json:"patientName"`
 	HowReceipt              string `json:"howReceipt"`
 	Alergo                  string `json:"alergo"`
-	ContactInfectied        string `json:"contactInfectied"`
+	ContactInfected         string `json:"contactInfected"`
 	Hiv                     string `json:"hiv"`
 	Transfusion             string `json:"transfusion"`
 	Dyscountry              string `json:"dyscountry"`

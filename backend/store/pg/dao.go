@@ -77,11 +77,13 @@ const (
 	  FROM appointments a
         JOIN users u ON a.doctor_id = u.id
 	    JOIN patients p ON a.patient_id = p.id
-	  WHERE p.name LIKE $1`
+	  WHERE p.name LIKE $1
+	  ORDER BY a.date_receipt DESC, p.name
+	  LIMIT 100`
 
 	appointmentInsert = `
       INSERT INTO appointments (
-        date_receipt, doctor_id, patient_id, how_receipt, alergo, contact_infectied,
+        date_receipt, doctor_id, patient_id, how_receipt, alergo, contact_infected,
         hiv, transfusion, dyscountry, smoking, drugs, inheritance, diseases, gyndiseases,
         paritet, pregnancy, first_trimester, second_trimester, third_trimester, history,
         exp_by_menstruation, exp_by_first_visit, exp_by_ultra, health_state_id, claims,
@@ -106,7 +108,7 @@ const (
 	  WITH rows AS (
         UPDATE appointments
           SET date_receipt = $1, doctor_id = $2, patient_id = $3, how_receipt = $4, alergo = $5,
-              contact_infectied = $6, hiv = $7, transfusion = $8, dyscountry = $9, smoking = $10,
+              contact_infected = $6, hiv = $7, transfusion = $8, dyscountry = $9, smoking = $10,
               drugs = $11, inheritance = $12, diseases = $13, gyndiseases = $14, paritet = $15,
               pregnancy = $16, first_trimester = $17, second_trimester = $18, third_trimester = $19,
               history = $20, exp_by_menstruation = $21, exp_by_first_visit = $22, exp_by_ultra = $23,
@@ -287,7 +289,7 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 		&ap.PatientId,
 		&ap.HowReceipt,
 		&ap.Alergo,
-		&ap.ContactInfectied,
+		&ap.ContactInfected,
 		&ap.Hiv,
 		&ap.Transfusion,
 		&ap.Dyscountry,
@@ -396,7 +398,7 @@ func (d *dao) insertAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.PatientId,
 		ap.HowReceipt,
 		ap.Alergo,
-		ap.ContactInfectied,
+		ap.ContactInfected,
 		ap.Hiv,
 		ap.Transfusion,
 		ap.Dyscountry,
@@ -479,7 +481,7 @@ func (d *dao) updateAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.PatientId,
 		ap.HowReceipt,
 		ap.Alergo,
-		ap.ContactInfectied,
+		ap.ContactInfected,
 		ap.Hiv,
 		ap.Transfusion,
 		ap.Dyscountry,

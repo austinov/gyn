@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     "patient_id"                integer,
     "how_receipt"               varchar(100),
     "alergo"                    varchar(100),
-    "contact_infectied"         varchar(100),
+    "contact_infected"          varchar(100),
     "hiv"                       varchar(100),
     "transfusion"               varchar(100),
     "dyscountry"                varchar(100),
@@ -262,7 +262,7 @@ COMMENT ON COLUMN appointments.doctor_id IS 'Дежурный врач акуш�
 COMMENT ON COLUMN appointments.patient_id IS 'Пациент';
 COMMENT ON COLUMN appointments.how_receipt IS 'Поступила';
 COMMENT ON COLUMN appointments.alergo IS 'Аллергоанамнез';
-COMMENT ON COLUMN appointments.contact_infectied IS 'Контакт с инфекционными больными';
+COMMENT ON COLUMN appointments.contact_infected IS 'Контакт с инфекционными больными';
 COMMENT ON COLUMN appointments.hiv IS 'Малярия, туберкулез, гепатиты, ВИЧ';
 COMMENT ON COLUMN appointments.transfusion IS 'Гематрансфузия';
 COMMENT ON COLUMN appointments.dyscountry IS 'Пребывание в неблагополучных странах в течении 3-х лет';
