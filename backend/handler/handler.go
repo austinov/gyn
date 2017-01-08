@@ -1,13 +1,16 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/austinov/gyn/backend/config"
 	"github.com/austinov/gyn/backend/store"
 	"github.com/austinov/gyn/backend/util"
+	"github.com/nguyenthenguyen/docx"
 	"github.com/pkg/errors"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -20,6 +23,7 @@ type Handler interface {
 	GetDictionaries(c echo.Context) error
 	SearchAppointments(c echo.Context) error
 	GetAppointment(c echo.Context) error
+	GetAppointmentDocx(c echo.Context) error
 	SaveAppointment(c echo.Context) error
 }
 
@@ -135,6 +139,35 @@ func (h handler) GetAppointment(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
 	return c.JSON(http.StatusOK, ap)
+}
+
+func (h handler) GetAppointmentDocx(c echo.Context) error {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.Logger().Debugf("%+v", errors.WithStack(err))
+		return c.JSON(http.StatusBadRequest, h.ec.InvalidRequestParameterError(err))
+	}
+	ap, err := h.dao.GetAppointment(id)
+	if err != nil {
+		if err == store.ErrDataNotFound {
+			return c.JSON(http.StatusBadRequest, h.ec.NoDataError(err))
+		}
+		c.Logger().Debugf("%+v", errors.WithStack(err))
+		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
+	}
+	// TODO
+	file, err := util.FillDocx(ap, h.cfg.DocxDir+"template.docx", func(doc *docx.Docx) error {
+		doc.Replace("[expByMenstruation]", ap.ExpByMenstruation, -1)
+		return nil
+	})
+	if err != nil {
+		c.Logger().Debugf("%+v", errors.WithStack(err))
+		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
+	}
+	defer os.Remove(file.Name())
+
+	c.Response().Header().Set(echo.HeaderContentType, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+	return c.Attachment(file, fmt.Sprintf("ap_%d_%d.docx", ap.Id, ap.PatientId))
 }
 
 func (h handler) SaveAppointment(c echo.Context) error {

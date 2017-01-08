@@ -13,4 +13,5 @@ func initAPI(e *echo.Echo, h handler.Handler) {
 	e.POST("/api/appointments", h.SearchAppointments, tokenMiddleware(config.Get()))
 	e.PUT("/api/appointment", h.SaveAppointment, tokenMiddleware(config.Get()))
 	e.GET("/api/appointment/:id", h.GetAppointment, tokenMiddleware(config.Get()))
+	e.GET("/api/appointment/:id/docx", h.GetAppointmentDocx, tokenMiddleware(config.Get()))
 }

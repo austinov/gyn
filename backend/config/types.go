@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/hex"
+	"strings"
 	"time"
 )
 
@@ -26,6 +27,7 @@ type (
 		DebugMode      bool      `mapstructure:"-"`
 		ListenAddr     string    `mapstructure:"listen-addr"`
 		AuthCookieName string    `mapstructure:"auth-cookie-name"`
+		DocxDir        string    `mapstructure:"docx-dir"`
 		JWT            JWTConfig `mapstructure:"jwt-token"`
 		DB             DBConfig  `mapstructure:"db"`
 		Ctx            CtxConfig
@@ -35,6 +37,12 @@ type (
 func (c *Config) init() {
 	if c.AuthCookieName == "" {
 		c.AuthCookieName = "X-App-Auth"
+	}
+	if c.DocxDir == "" {
+		c.DocxDir = "./docx/"
+	}
+	if !strings.HasSuffix(c.DocxDir, "/") {
+		c.DocxDir += "/"
 	}
 	c.Ctx.Key = "user-context"
 	var err error
