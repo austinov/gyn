@@ -7,6 +7,7 @@ import respHelper from '../utils/response-helper';
 dispatcher.on(dispatcher.SEARCH_APPOINTMENTS, _searchAppointments);
 dispatcher.on(dispatcher.NEW_APPOINTMENT, _newAppointment);
 dispatcher.on(dispatcher.GET_APPOINTMENT, _getAppointment);
+dispatcher.on(dispatcher.GET_APPOINTMENT_DOCX, _getAppointmentDocx);
 dispatcher.on(dispatcher.SAVE_APPOINTMENT, _saveAppointment);
 
 function _searchAppointments(params, cb) {
@@ -29,7 +30,7 @@ function _searchAppointments(params, cb) {
                 cb(data, error);
             })
             .catch(e => {
-                _catchError(e, () => {
+                _catchError(e, false, () => {
                     cb([], e);
                 });
             });
@@ -51,7 +52,7 @@ function _newAppointment(cb) {
                 }
             })
             .catch(e => {
-                _catchError(e);
+                _catchError(e, true);
             });
     }
 }
@@ -77,11 +78,32 @@ function _getAppointment(id, cb) {
             cb(dict, data, error);
         })
         .catch(e => {
-            _catchError(e, () => {
+            _catchError(e, true, () => {
                 cb({}, {}, e);
             });
         });
     }
+}
+
+function _getAppointmentDocx(id) {
+    _fetch.fetch('/api/appointment/' + id + '/docx')
+        .then(r => {
+            return respHelper.handleStatus(r, true);
+        })
+        .then(data => {
+            const {error} = data;
+            if (error) {
+                console.log(error);
+            } else {
+                let link = document.createElement('a');
+                link.href = window.URL.createObjectURL(data.blob);
+                link.download = data.filename;
+                link.click();
+            }
+        })
+        .catch(e => {
+            _catchError(e, true);
+        });
 }
 
 function _saveAppointment(data, cb) {
@@ -106,7 +128,7 @@ function _saveAppointment(data, cb) {
                 cb(data.id, error);
             })
             .catch(e => {
-                _catchError(e, () => {
+                _catchError(e, true, () => {
                     cb([], e);
                 });
             });
@@ -145,10 +167,12 @@ function _getDefaultData() {
     }
 }
 
-function _catchError(e, cb) {
+function _catchError(e, alerting, cb) {
     console.log(e);
     if (e.error === 'AUTH') {
-        alert('Ошибка проверки пользователя.\nПопробуйте выйти/войти в приложение и повторить действие.');
+        if (alerting) {
+            alert('Ошибка проверки пользователя.\nПопробуйте выйти/войти в приложение и повторить действие.');
+        }
         dispatcher.trigger(dispatcher.RE_LOGIN, {});
     } else if (cb) {
         cb();

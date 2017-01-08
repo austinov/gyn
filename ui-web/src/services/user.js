@@ -53,7 +53,6 @@ function _relogin() {
             .catch(e => {
                 console.log(e);
                 if (e.error === 'AUTH') {
-                    //alert('Auth error. Try to re-login');
                     _logout();
                     dispatcher.trigger(dispatcher.SHOW_LOGIN_DIALOG, {});
                 }
