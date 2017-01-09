@@ -1,5 +1,5 @@
-hash: 3fb06b52c144c8602992c62f7a63c9b37422556f3be00ca814cf133d9e2a76c3
-updated: 2017-01-09T00:32:03.765266701+03:00
+hash: afef2ee40750d14e34fe9d4fa0ff542b7d389ed5fd9bf44fa17bc89f8d4b83ed
+updated: 2017-01-10T01:38:07.102513708+03:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877
@@ -7,10 +7,14 @@ imports:
   version: d2709f9f1f31ebcda9651b03077758c1f3a0018c
 - name: github.com/fatih/structs
   version: a720dfa8df582c51dee1b36feabb906bde1588bd
+- name: github.com/fiam/gounidecode
+  version: 8deddbd03fec2c28969266e52f27b6fb22be1823
+  subpackages:
+  - unidecode
 - name: github.com/fsnotify/fsnotify
   version: 629574ca2a5df945712d3079857300b5e4da0236
 - name: github.com/hashicorp/hcl
-  version: 80e628d796135357b3d2e33a985c666b9f35eee1
+  version: eb6f65b2d77ed5078887f960ff570fbddbbeb49d
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -62,7 +66,7 @@ imports:
 - name: github.com/spf13/cast
   version: 56a7ecbeb18dde53c6db4bd96b541fd9741b8d44
 - name: github.com/spf13/jwalterweatherman
-  version: bccdd23ae5e51bd2b081814db093646c7af3d34d
+  version: fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66
 - name: github.com/spf13/pflag
   version: 25f8b5b07aece3207895bf19f7ab517eb3b22a40
 - name: github.com/spf13/viper
@@ -75,7 +79,7 @@ imports:
   - bcrypt
   - blowfish
 - name: golang.org/x/net
-  version: da2b4fa28524a3baf148c1b94df4440267063c88
+  version: 4aaac4bb3614c5b62f50ce8d7a27778bfeb285ac
   subpackages:
   - context
 - name: golang.org/x/sys

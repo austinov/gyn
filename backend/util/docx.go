@@ -10,7 +10,7 @@ import (
 	"github.com/nguyenthenguyen/docx"
 )
 
-type FillDocxCallback func(doc *docx.Docx) error
+type FillDocxCallback func(appointment interface{}, doc *docx.Docx) error
 
 func FillDocx(appointment interface{}, templatePath string, cb FillDocxCallback) (*os.File, error) {
 	doc, err := docx.ReadDocxFile(templatePath)
@@ -33,7 +33,7 @@ func FillDocx(appointment interface{}, templatePath string, cb FillDocxCallback)
 	}
 	// execute callback to fill some fields
 	if cb != nil {
-		if err = cb(tmpDocx); err != nil {
+		if err = cb(appointment, tmpDocx); err != nil {
 			return nil, err
 		}
 	}

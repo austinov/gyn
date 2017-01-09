@@ -71,15 +71,6 @@ const (
 	  FROM vw_appointments a
 	  WHERE id = $1`
 
-	/*
-			patientAppointmentSelect = `
-			  SELECT a.*, u.name AS doctor_name, p.name AS patient_name
-			  FROM appointments a
-		        JOIN users u ON a.doctor_id = u.id
-				JOIN patients p ON a.patient_id = p.id
-			  WHERE a.id = $1`
-	*/
-
 	patientInsert = `
       WITH s AS (
           SELECT id

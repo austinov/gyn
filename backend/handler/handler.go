@@ -161,43 +161,7 @@ func (h handler) GetAppointmentDocx(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
 	// TODO
-	file, err := util.FillDocx(ap, h.cfg.DocxDir+"template.docx", func(doc *docx.Docx) error {
-		doc.Replace("[dateReceipt]", time.Unix(ap.DateReceipt, 0).Format("02-01-2006 15:04"), -1)
-		tongue := ""
-		addTongue := func(value bool, text string) {
-			if value {
-				if tongue != "" {
-					tongue += ", " + text
-				} else {
-					tongue = text
-				}
-			}
-		}
-		addTongue(ap.TongueClean, "чистый")
-		addTongue(ap.TongueWet, "влажный")
-		addTongue(ap.TongueDry, "сухой")
-		addTongue(ap.TongueCoated, "обложен")
-		addTongue(ap.TongueUncoated, "не обложен")
-		doc.Replace("[tongue]", tongue, -1)
-
-		dysuric := "нет"
-		if ap.Dysuric {
-			dysuric = "есть"
-		}
-		doc.Replace("[dysuric]", dysuric, -1)
-
-		bowel := "не регулярный"
-		if ap.Bowel {
-			bowel = "регулярный"
-		}
-		doc.Replace("[bowel]", bowel, -1)
-		/*
-			fetalPreviaName + fetalAlignName
-			develOrgansName + genitalAnomalies
-			lenghtCervix + truncateCervix
-		*/
-		return nil
-	})
+	file, err := util.FillDocx(ap, h.cfg.DocxDir+"template.docx", fillDocxCallback)
 	if err != nil {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
@@ -205,7 +169,8 @@ func (h handler) GetAppointmentDocx(c echo.Context) error {
 	defer os.Remove(file.Name())
 
 	c.Response().Header().Set(echo.HeaderContentType, docxHeaderContentType)
-	return c.Attachment(file, fmt.Sprintf("ap_%d_%d.docx", ap.PatientId, ap.DateReceipt))
+	dateReceipt := time.Unix(ap.DateReceipt, 0).Format("02-01-2006_15:04")
+	return c.Attachment(file, fmt.Sprintf("%s_%s.docx", util.Translit(ap.PatientName), dateReceipt))
 }
 
 func (h handler) SaveAppointment(c echo.Context) error {
@@ -241,4 +206,43 @@ func createCookie(authCookieName, accessToken string) *echo.Cookie {
 	cookie.SetPath("/")
 	//cookie.SetSecure(true)
 	return cookie
+}
+
+func fillDocxCallback(appointment interface{}, doc *docx.Docx) error {
+	ap := appointment.(store.Appointment)
+	doc.Replace("[dateReceipt]", time.Unix(ap.DateReceipt, 0).Format("02-01-2006 15:04"), -1)
+	tongue := ""
+	addTongue := func(value bool, text string) {
+		if value {
+			if tongue != "" {
+				tongue += ", " + text
+			} else {
+				tongue = text
+			}
+		}
+	}
+	addTongue(ap.TongueClean, "чистый")
+	addTongue(ap.TongueWet, "влажный")
+	addTongue(ap.TongueDry, "сухой")
+	addTongue(ap.TongueCoated, "обложен")
+	addTongue(ap.TongueUncoated, "не обложен")
+	doc.Replace("[tongue]", tongue, -1)
+
+	dysuric := "нет"
+	if ap.Dysuric {
+		dysuric = "есть"
+	}
+	doc.Replace("[dysuric]", dysuric, -1)
+
+	bowel := "не регулярный"
+	if ap.Bowel {
+		bowel = "регулярный"
+	}
+	doc.Replace("[bowel]", bowel, -1)
+	/*
+		fetalPreviaName + fetalAlignName
+		develOrgansName + genitalAnomalies
+		lenghtCervix + truncateCervix
+	*/
+	return nil
 }

@@ -18,3 +18,4 @@ import:
   - bcrypt
 - package: github.com/nguyenthenguyen/docx
 - package: github.com/fatih/structs
+- package: github.com/fiam/gounidecode
