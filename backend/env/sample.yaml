@@ -1,1 +1,19 @@
 listen-addr: ":8080"
+
+# Name of authorization cookie, default is X-App-Auth
+#auth-cookie-name: "X-App-Auth"
+
+# Path to directory contains docx templates, default is ./docx
+#docx-dir: ./docx
+
+jwt-token:
+  issuer: gyn
+  # cat /dev/urandom | tr -cd 'a-f0-9' | head -c 32
+  sign-key: "a6fceedbba447fc3490764f57c68c1a0"
+  expiration: 48h
+
+# Configuration of db storage
+db:
+  type: pg
+  connection-string: "dbname=gyn host=/run/postgresql/"
+  #connection-string: "dbname=gyn host=pgdb sslmode=disable user=postgres"

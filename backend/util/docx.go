@@ -4,50 +4,68 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 
-	"github.com/austinov/gyn/backend/store"
+	"github.com/fatih/structs"
 	"github.com/nguyenthenguyen/docx"
 )
 
 type FillDocxCallback func(doc *docx.Docx) error
 
-func FillDocx(ap store.Appointment, templatePath string, cb FillDocxCallback) (*os.File, error) {
+func FillDocx(appointment interface{}, templatePath string, cb FillDocxCallback) (*os.File, error) {
 	doc, err := docx.ReadDocxFile(templatePath)
 	if err != nil {
 		return nil, err
 	}
 	defer doc.Close()
 	tmpDocx := doc.Editable()
-	tmpDocx.Replace("[dateReceipt]", fmt.Sprintf("%d", ap.DateReceipt), -1)
-	tmpDocx.Replace("[doctorName]", ap.DoctorName, -1)
-	tmpDocx.Replace("[howReceipt]", ap.HowReceipt, -1)
-	tmpDocx.Replace("[alergo]", ap.Alergo, -1)
-	tmpDocx.Replace("[contactInfected]", ap.ContactInfected, -1)
-	tmpDocx.Replace("[hiv]", ap.Hiv, -1)
-	tmpDocx.Replace("[transfusion]", ap.Transfusion, -1)
-	tmpDocx.Replace("[dyscountry]", ap.Dyscountry, -1)
-	tmpDocx.Replace("[smoking]", ap.Smoking, -1)
-	tmpDocx.Replace("[drugs]", ap.Drugs, -1)
-	tmpDocx.Replace("[inheritance]", ap.Inheritance, -1)
-	tmpDocx.Replace("[diseases]", ap.Diseases, -1)
-	tmpDocx.Replace("[gyndiseases]", ap.Gyndiseases, -1)
-	tmpDocx.Replace("[history]", ap.History, -1)
-	tmpDocx.Replace("[paritet]", ap.Paritet, -1)
-	tmpDocx.Replace("[pregnancy]", ap.Pregnancy, -1)
-	tmpDocx.Replace("[firstTrimester]", ap.FirstTrimester, -1)
-	tmpDocx.Replace("[secondTrimester]", ap.SecondTrimester, -1)
-	tmpDocx.Replace("[thirdTrimester]", ap.ThirdTrimester, -1)
-
+	// retrieve all fields of struct
+	fields := structs.Fields(appointment)
+	for _, field := range fields {
+		// fill document only for field with tag 'docx'
+		if tag := field.Tag("docx"); tag != "" {
+			val, err := decode(field.Value(), field.Kind())
+			if err != nil {
+				return nil, fmt.Errorf("decode error of field %s: %#v", field.Name(), err)
+			}
+			tmpDocx.Replace(tag, val, -1)
+		}
+	}
+	// execute callback to fill some fields
 	if cb != nil {
 		if err = cb(tmpDocx); err != nil {
 			return nil, err
 		}
 	}
-
+	// create temporary file to save filled document
 	file, err := ioutil.TempFile(os.TempDir(), "")
 	if err != nil {
 		return nil, err
 	}
 	tmpDocx.WriteToFile(file.Name())
 	return file, nil
+}
+
+func decode(data interface{}, dataKind reflect.Kind) (string, error) {
+	switch dataKind {
+	case reflect.String:
+		return data.(string), nil
+	case reflect.Int:
+	case reflect.Int8:
+	case reflect.Int16:
+	case reflect.Int32:
+	case reflect.Int64:
+	case reflect.Uint:
+	case reflect.Uint8:
+	case reflect.Uint16:
+	case reflect.Uint32:
+	case reflect.Uint64:
+		return fmt.Sprintf("%d", data), nil
+	case reflect.Float32:
+	case reflect.Float64:
+		return fmt.Sprintf("%f", data), nil
+	case reflect.Bool:
+		return fmt.Sprintf("%t", data), nil
+	}
+	return "", fmt.Errorf("unsupported type: %s", dataKind)
 }

@@ -51,11 +51,34 @@ const (
       ORDER BY t.dict,  t.orderby, t.id`
 
 	patientAppointmentSelect = `
-	  SELECT a.*, u.name AS doctor_name, p.name AS patient_name
-	  FROM appointments a
-        JOIN users u ON a.doctor_id = u.id
-		JOIN patients p ON a.patient_id = p.id
-	  WHERE a.id = $1`
+	  SELECT
+        id, date_receipt, doctor_id, patient_id, how_receipt, alergo, contact_infected,
+        hiv, transfusion, dyscountry, smoking, drugs, inheritance, diseases, gyndiseases,
+        paritet, pregnancy, first_trimester, second_trimester, third_trimester, history,
+        exp_by_menstruation, exp_by_first_visit, exp_by_ultra, health_state_id, claims,
+        head, vision, skin_state_id, lymph, breath, rale, tones, pulse, pulse_type, pressure,
+        tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat, belly,
+        peritoneal, labors, dysuric, bowel, limb_swelling, face_swelling, uteruse_state_id,
+        fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id, fetal_pulse,
+        reproductive_discharge_id, vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id,
+        genital_anomalies, vagina_state_id, lenght_cervix, truncate_cervix, outer_throat_state_id,
+        channel_cervix, fetal_bladder, fetal_bladder_previa_id, fetal_bladder_align_id, arches,
+        conjugate, pelvis_state_id, pelvis_discharge, diagnosis, conclusion, birth_plan,
+        doctor_name, patient_name, pelvis_state_name, fetal_bladder_align_name,
+        fetal_bladder_previa_name, outer_throat_state_name, vagina_state_name, devel_organs_name,
+        reproductive_discharge_name, fetal_align_name, fetal_heartbeat_name, fetal_previa_name,
+        fetal_position_name, uteruse_state_name, skin_state_name, health_state_name
+	  FROM vw_appointments a
+	  WHERE id = $1`
+
+	/*
+			patientAppointmentSelect = `
+			  SELECT a.*, u.name AS doctor_name, p.name AS patient_name
+			  FROM appointments a
+		        JOIN users u ON a.doctor_id = u.id
+				JOIN patients p ON a.patient_id = p.id
+			  WHERE a.id = $1`
+	*/
 
 	patientInsert = `
       WITH s AS (
@@ -363,7 +386,21 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 		&ap.Conclusion,
 		&ap.BirthPlan,
 		&ap.DoctorName,
-		&ap.PatientName)
+		&ap.PatientName,
+		&ap.PelvisStateName,
+		&ap.FetalBladderAlignName,
+		&ap.FetalBladderPreviaName,
+		&ap.OuterThroatStateName,
+		&ap.VaginaStateName,
+		&ap.DevelOrgansName,
+		&ap.ReproductiveDischargeName,
+		&ap.FetalAlignName,
+		&ap.FetalHeartbeatName,
+		&ap.FetalPreviaName,
+		&ap.FetalPositionName,
+		&ap.UteruseStateName,
+		&ap.SkinStateName,
+		&ap.HealthStateName)
 	if err != nil && err == sql.ErrNoRows {
 		err = store.ErrDataNotFound
 	}

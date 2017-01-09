@@ -1,4 +1,4 @@
-package: github.com/austinov/gyn-backend
+package: github.com/austinov/gyn/backend
 import:
 - package: github.com/labstack/echo
   version: ^2.1.0
@@ -17,3 +17,4 @@ import:
   subpackages:
   - bcrypt
 - package: github.com/nguyenthenguyen/docx
+- package: github.com/fatih/structs

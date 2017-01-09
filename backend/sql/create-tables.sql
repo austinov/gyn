@@ -356,3 +356,39 @@ ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_positions FOREIGN 
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_uteruse_states FOREIGN KEY (uteruse_state_id) REFERENCES uteruse_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_skin_states FOREIGN KEY (skin_state_id) REFERENCES skin_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_health_states FOREIGN KEY (health_state_id) REFERENCES health_states (id);
+
+CREATE OR REPLACE VIEW vw_appointments AS
+SELECT a.*,
+       u.name AS doctor_name,
+       p.name AS patient_name,
+       ps.name AS pelvis_state_name,
+       fba.name AS fetal_bladder_align_name,
+       fbp.name AS fetal_bladder_previa_name,
+       ots.name AS outer_throat_state_name,
+       vs.name AS vagina_state_name,
+       dor.name AS devel_organs_name,
+       rd.name AS reproductive_discharge_name,
+       fa.name AS fetal_align_name,
+       fh.name AS fetal_heartbeat_name,
+       fpr.name AS fetal_previa_name,
+       fpp.name AS fetal_position_name,
+       us.name AS uteruse_state_name,
+       ss.name AS skin_state_name,
+       hs.name AS health_state_name
+FROM appointments a
+  JOIN users u ON a.doctor_id = u.id
+  JOIN patients p ON a.patient_id = p.id
+  LEFT JOIN pelvis_states ps ON a.pelvis_state_id = ps.id
+  LEFT JOIN fetal_bladder_aligns fba ON a.fetal_bladder_align_id = fba.id
+  LEFT JOIN fetal_bladder_previas fbp ON a.fetal_bladder_previa_id = fbp.id
+  LEFT JOIN outer_throat_states ots ON a.outer_throat_state_id = ots.id
+  LEFT JOIN vagina_states vs ON a.vagina_state_id = vs.id
+  LEFT JOIN devel_organs dor ON a.devel_organs_id = dor.id
+  LEFT JOIN reproductive_discharges rd ON a.reproductive_discharge_id = rd.id
+  LEFT JOIN fetal_aligns fa ON a.fetal_align_id = fa.id
+  LEFT JOIN fetal_heartbeats fh ON a.fetal_heartbeat_id = fh.id
+  LEFT JOIN fetal_previas fpr ON a.fetal_previa_id = fpr.id
+  LEFT JOIN fetal_positions fpp ON a.fetal_position_id = fpp.id
+  LEFT JOIN uteruse_states us ON a.uteruse_state_id = us.id
+  LEFT JOIN skin_states ss ON a.skin_state_id = ss.id
+  LEFT JOIN health_states hs ON a.health_state_id = hs.id;
