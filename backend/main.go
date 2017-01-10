@@ -30,11 +30,15 @@ func main() {
 	route.Init(e, h)
 
 	log.Printf("Serving at address: '%s'.", c.ListenAddr)
+	if c.TLSKeyFile != "" && c.TLSCertFile != "" {
+		log.Printf("Use 'https://' prefix in browser.")
+	}
 	log.Printf("Press Ctrl+C to exit.")
 
 	e.Run(standard.WithConfig(engine.Config{
-		Address: c.ListenAddr,
-		// TODO TLS
+		Address:     c.ListenAddr,
+		TLSCertFile: c.TLSCertFile,
+		TLSKeyFile:  c.TLSKeyFile,
 	}))
 }
 

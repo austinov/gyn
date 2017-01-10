@@ -26,6 +26,8 @@ type (
 	Config struct {
 		DebugMode      bool      `mapstructure:"-"`
 		ListenAddr     string    `mapstructure:"listen-addr"`
+		TLSCertFile    string    `mapstructure:"tls-cert-file"`
+		TLSKeyFile     string    `mapstructure:"tls-key-file"`
 		AuthCookieName string    `mapstructure:"auth-cookie-name"`
 		DocxDir        string    `mapstructure:"docx-dir"`
 		JWT            JWTConfig `mapstructure:"jwt-token"`
