@@ -160,7 +160,6 @@ func (h handler) GetAppointmentDocx(c echo.Context) error {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
-	// TODO
 	file, err := util.FillDocx(ap, h.cfg.DocxDir+"template.docx", fillDocxCallback)
 	if err != nil {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
