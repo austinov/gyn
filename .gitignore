@@ -32,5 +32,7 @@ _testmain.go
 **/node_modules
 
 **/backend/env/dev.yaml
+**/backend/env/dev-server.crt
+**/backend/env/dev-server.key
 **/ui-web/dist
 
