@@ -138,10 +138,15 @@ function _saveAppointment(data, cb) {
 const userName = 'userName';
 
 function _getDefaultData() {
+    let conclusion = '1) госпитализируется в АОПБ согласно приказу №572н \n';
+    conclusion += '2) динамическое наблюдение в условиях АОПБ\n'
+    conclusion += '3)АД, УЗИ, допплерометрия – \n'
+
     let birthPlan = '- роды вести per vias naturals под адекватным обезболиванием (ЭДА)\n';
     birthPlan += '- профилактика кровотечения в  III и раннем послеродовом периодах\n';
     birthPlan += '- функциональная оценка таза\n';
     birthPlan += '- в случае функционального ухудшения плода или отклонении от нормального течения родов своевременно решить вопрос об оперативном родоразрешении';
+    birthPlan += '- терапия, направленная на ';
     return {
         dateReceipt: new Date()/1000,
         doctorName: localStorage.getItem(userName),
@@ -154,8 +159,10 @@ function _getDefaultData() {
         smoking: 'отр',
         drugs: 'отр',
         inheritance: 'не отягощена',
+        firstTrimester: 'Скрининг - ',
         head: 'не болит',
         vision: 'ясное',
+        lymph: 'не пальпируются',
         pulseType: 'ритмичный',
         throat: 'чистый',
         peritoneal: 'отрицательные',
@@ -163,6 +170,8 @@ function _getDefaultData() {
         dysuric: false,
         bowel: true,
         arches: 'свободные',
+        diagnosis: 'Беременность ',
+        conclusion: conclusion,
         birthPlan: birthPlan
     }
 }
