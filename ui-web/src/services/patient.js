@@ -150,7 +150,6 @@ function _getDefaultData() {
     return {
         dateReceipt: new Date()/1000,
         doctorName: localStorage.getItem(userName),
-        howReceipt: 'самотеком',
         alergo: 'отр',
         contactInfected: 'отр',
         hiv: 'отр',
@@ -158,6 +157,7 @@ function _getDefaultData() {
         dyscountry: 'отр',
         smoking: 'отр',
         drugs: 'отр',
+        history: 'ОРВИ',
         inheritance: 'не отягощена',
         firstTrimester: 'Скрининг - ',
         head: 'не болит',

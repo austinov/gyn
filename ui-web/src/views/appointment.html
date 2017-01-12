@@ -23,53 +23,65 @@ import date from '../utils/date';
           <label class="control-label">Дата, время приёма</label>
           <input type="text" class="form-control" name="dateReceipt" placeholder="dd-MM-yyyy hh:mm" value="{ formatDateReceipt(appointment.dateReceipt) }">
         </div>
-        <div class="{ col-md-4: true, has-error: patientNameError }">
+        <div class="{ col-md-5: true, has-error: patientNameError }">
           <label class="control-label">ФИО пациента</label>
           <input type="text" class="form-control" name="patientName" placeholder="Фамилия Имя Отчество" value="{ appointment.patientName }">
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
           <label class="control-label">Дежурный врач акушер-гинеколог</label>
           <input type="text" class="form-control" placeholder="Фамилия Имя Отчество" value="{ appointment.doctorName }" readonly>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-3">
           <label class="control-label">Поступила</label>
-          <input type="text" class="form-control" name="howReceipt" placeholder="произвольный текст" value="{ appointment.howReceipt }">
+          <select name="receiptKindId" class="form-control">
+            <option each="{ k in dictionaries.receipt_kinds }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.receiptKindId) }">{ k.name }</option>
+          </select>
         </div>
-        <div class="col-md-6">
-          <label class="control-label">Аллергоанамнез</label>
-          <input type="text" class="form-control" name="alergo" placeholder="произвольный текст" value="{ appointment.alergo }">
+        <div class="col-md-9">
+          <label class="control-label">Диагноз при поступлении</label>
+          <textarea class="form-control" rows="1" name="receipt_diagnosis" placeholder="произвольный текст" value="{ appointment.receiptDiagnosis }"></textarea>
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
+          <label class="control-label">Аллергоанамнез</label>
+          <input type="text" class="form-control" name="alergo" placeholder="произвольный текст" value="{ appointment.alergo }">
+        </div>
+        <div class="col-md-4">
           <label class="control-label">Контакт с инфекционными больными</label>
           <input type="text" class="form-control" name="contactInfected" placeholder="произвольный текст" value="{ appointment.contactInfected }">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <label class="control-label">Малярия, туберкулез, гепатиты, ВИЧ</label>
           <input type="text" class="form-control" name="hiv" placeholder="произвольный текст" value="{ appointment.hiv }">
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <label class="control-label">Гематрансфузия</label>
           <input type="text" class="form-control" name="transfusion" placeholder="произвольный текст" value="{ appointment.transfusion }">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <label class="control-label">Пребывание в неблагополучных странах в течении 3-х лет</label>
           <input type="text" class="form-control" name="dyscountry" placeholder="произвольный текст" value="{ appointment.dyscountry }">
+        </div>
+        <div class="col-md-4">
+          <label class="control-label">Табакокурение</label>
+          <input type="text" class="form-control" name="smoking" placeholder="произвольный текст" value="{ appointment.smoking }">
         </div>
       </div>
       <div class="row">
         <div class="col-md-6">
-          <label class="control-label">Табакокурение</label>
-          <input type="text" class="form-control" name="smoking" placeholder="произвольный текст" value="{ appointment.smoking }">
-        </div>
-        <div class="col-md-6">
           <label class="control-label">Прием наркотических, психотропных препаратов</label>
           <input type="text" class="form-control" name="drugs" placeholder="произвольный текст" value="{ appointment.drugs }">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="control-label">Из анамнеза</label>
+          <textarea class="form-control" rows="2" name="history" placeholder="произвольный текст" value="{ appointment.history }"></textarea>
         </div>
       </div>
       <div class="row">
@@ -77,12 +89,6 @@ import date from '../utils/date';
           <label class="control-label">Наследственность</label>
           <input type="text" class="form-control" name="inheritance" placeholder="произвольный текст" value="{ appointment.inheritance }">
         </div>
-        <div class="col-md-6">
-          <label class="control-label">Перенесенные заболевания</label>
-          <input type="text" class="form-control" name="diseases" placeholder="произвольный текст" value="{ appointment.diseases }">
-        </div>
-      </div>
-      <div class="row">
         <div class="col-md-6">
           <label class="control-label">Гинекологические заболевания</label>
           <input type="text" class="form-control" name="gyndiseases" placeholder="произвольный текст" value="{ appointment.gyndiseases }">
@@ -103,25 +109,19 @@ import date from '../utils/date';
       <div class="row">
         <div class="col-md-12">
           <label class="control-label">I тр.</label>
-          <input type="text" class="form-control" name="firstTrimester" placeholder="произвольный текст" value="{ appointment.firstTrimester }">
+          <textarea class="form-control" rows="1" name="firstTrimester" placeholder="произвольный текст" value="{ appointment.firstTrimester }"></textarea>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <label class="control-label">II тр.</label>
-          <input type="text" class="form-control" name="secondTrimester" placeholder="произвольный текст" value="{ appointment.secondTrimester }">
+          <textarea class="form-control" rows="1" name="secondTrimester" placeholder="произвольный текст" value="{ appointment.secondTrimester }"></textarea>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <label class="control-label">III тр.</label>
-          <input type="text" class="form-control" name="thirdTrimester" placeholder="произвольный текст" value="{ appointment.thirdTrimester }">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <label class="control-label">Из анамнеза</label>
-          <textarea class="form-control" rows="2" name="history" placeholder="произвольный текст" value="{ appointment.history }"></textarea>
+          <textarea class="form-control" rows="1" name="thirdTrimester" placeholder="произвольный текст" value="{ appointment.thirdTrimester }"></textarea>
         </div>
       </div>
       <div class="row">
