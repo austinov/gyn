@@ -20,16 +20,16 @@ COMMENT ON TABLE patients IS 'Пациенты';
 CREATE INDEX ind_patients_id ON patients USING btree (id);
 CREATE UNIQUE INDEX uni_patients ON patients (lower(name));
 
-CREATE TABLE IF NOT EXISTS receipt_kind (
+CREATE TABLE IF NOT EXISTS receipt_kinds (
     "id"      serial primary key,
     "name"    varchar(100) NOT NULL,
     "orderby" integer
 );
-COMMENT ON TABLE receipt_kind IS 'Типы поступления пациента';
-CREATE INDEX ind_receipt_kind_id ON receipt_kind USING btree (id);
-CREATE UNIQUE INDEX uni_receipt_kind ON receipt_kind (lower(name));
+COMMENT ON TABLE receipt_kinds IS 'Типы поступления пациента';
+CREATE INDEX ind_receipt_kind_id ON receipt_kinds USING btree (id);
+CREATE UNIQUE INDEX uni_receipt_kind ON receipt_kinds (lower(name));
 
-INSERT INTO receipt_kind (name) VALUES ('самотеком'), ('по наряду БСМП'), ('по направлению ЖК'), ('МОНИИАГ');
+INSERT INTO receipt_kinds (name) VALUES ('самотеком'), ('по наряду БСМП'), ('по направлению ЖК'), ('МОНИИАГ');
 
 CREATE TABLE IF NOT EXISTS health_states (
     "id"      serial primary key,
@@ -274,7 +274,6 @@ CREATE TABLE IF NOT EXISTS appointments (
     "paritet_sv"                varchar(500),
     "paritet_nb"                varchar(500),
     "paritet_eb"                varchar(500),
-    "pregnancy"                 text,
     "infection_markers"         boolean,
     "infection_markers_desc"    varchar(100),
     "tromboflebia"              boolean,
@@ -310,7 +309,9 @@ CREATE TABLE IF NOT EXISTS appointments (
     "throat"                    varchar(100),
     "belly_period"              varchar(100),
     "belly_state_id"            integer,
+    "epigastrium_state_use"     boolean,
     "epigastrium_state_id"      integer,
+    "scar_state_use"            boolean,
     "scar_state_id"             integer,
     "peritoneal"                varchar(100),
     "labors"                    varchar(100),
@@ -346,7 +347,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     "pelvis_discharge"          varchar(100),
     "diagnosis"                 text,
     "conclusion"                text,
-    "birth_plan_exist"          boolean,
+    "birth_plan_use"            boolean,
     "birth_plan"                text
 );
 
@@ -372,11 +373,10 @@ COMMENT ON COLUMN appointments.paritet_a IS 'Паритет - кол-во або
 COMMENT ON COLUMN appointments.paritet_sv IS 'Паритет - кол-во самопроизвольных выкидышей'; -- +
 COMMENT ON COLUMN appointments.paritet_nb IS 'Паритет - кол-во неразвивающихся беременностей'; -- +
 COMMENT ON COLUMN appointments.paritet_eb IS 'Паритет - кол-во эктопических беременностей'; -- +
-COMMENT ON COLUMN appointments.pregnancy IS 'Течение беременности';
-COMMENT ON COLUMN appointments.infection_markers IS 'Обследование на инфекционные маркеры'; -- +
-COMMENT ON COLUMN appointments.infection_markers_desc IS 'Текст обследования на инфекционные маркеры'; -- +
-COMMENT ON COLUMN appointments.tromboflebia IS 'Обследование на наследственную тромбофлебию'; -- +
-COMMENT ON COLUMN appointments.tromboflebia_desc IS 'Описание обследования на наследственную тромбофлебию'; -- +
+COMMENT ON COLUMN appointments.infection_markers IS 'Течение беременности: обследование на инфекционные маркеры'; -- +
+COMMENT ON COLUMN appointments.infection_markers_desc IS 'Течение беременности: описание обследования на инфекционные маркеры'; -- +
+COMMENT ON COLUMN appointments.tromboflebia IS 'Течение беременности: обследование на наследственную тромбофлебию'; -- +
+COMMENT ON COLUMN appointments.tromboflebia_desc IS 'Течение беременности: описание обследования на наследственную тромбофлебию'; -- +
 COMMENT ON COLUMN appointments.first_trimester IS 'I триместр';
 COMMENT ON COLUMN appointments.second_trimester IS 'II триместр';
 COMMENT ON COLUMN appointments.third_trimester IS 'III триместр';
@@ -408,7 +408,9 @@ COMMENT ON COLUMN appointments.tongue_uncoated IS 'Язык не обложен'
 COMMENT ON COLUMN appointments.throat IS 'Осмотр зева';
 COMMENT ON COLUMN appointments.belly_period IS 'Живот соответствует периоду'; -- +
 COMMENT ON COLUMN appointments.belly_state_id IS 'Состояние живота'; -- +
+COMMENT ON COLUMN appointments.epigastrium_state_use IS 'Использовать значение состояния область эпигастрия'; -- +
 COMMENT ON COLUMN appointments.epigastrium_state_id IS 'Состояние область эпигастрия'; -- +
+COMMENT ON COLUMN appointments.scar_state_use IS 'Использовать значение состояния область послеоперационного рубца'; -- +
 COMMENT ON COLUMN appointments.scar_state_id IS 'Состояние области послеоперационного рубца'; -- +
 COMMENT ON COLUMN appointments.peritoneal IS 'Перитонеальные симптомы';
 COMMENT ON COLUMN appointments.labors IS 'Родовая деятельность';
@@ -443,7 +445,7 @@ COMMENT ON COLUMN appointments.pelvis_state_id IS 'Костный таз';
 COMMENT ON COLUMN appointments.pelvis_discharge IS 'Выделения (костный таз)';
 COMMENT ON COLUMN appointments.diagnosis IS 'Диагноз';
 COMMENT ON COLUMN appointments.conclusion IS 'Заключение';
-COMMENT ON COLUMN appointments.birth_plan_exist IS 'Использование плана родов'; -- +
+COMMENT ON COLUMN appointments.birth_plan_use IS 'Использование плана родов'; -- +
 COMMENT ON COLUMN appointments.birth_plan IS 'План родов';
 
 CREATE INDEX ind_appointments_id ON appointments USING btree (id);
@@ -452,7 +454,7 @@ CREATE INDEX ind_appointments_doctor_id ON appointments USING btree (doctor_id);
 CREATE INDEX ind_appointments_patient_id ON appointments USING btree (patient_id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_doctor FOREIGN KEY (doctor_id) REFERENCES users (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_patient FOREIGN KEY (patient_id) REFERENCES patients (id);
-ALTER TABLE appointments ADD CONSTRAINT fk_appointments_receipt_kind FOREIGN KEY (receipt_kind_id) REFERENCES receipt_kind (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_receipt_kind FOREIGN KEY (receipt_kind_id) REFERENCES receipt_kinds (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_pelvis_states FOREIGN KEY (pelvis_state_id) REFERENCES pelvis_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_bladder_states FOREIGN KEY (fetal_bladder_state_id) REFERENCES fetal_bladder_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_bladder_aligns FOREIGN KEY (fetal_bladder_align_id) REFERENCES fetal_bladder_aligns (id);
@@ -501,11 +503,12 @@ SELECT a.*,
        ts.name AS tones_state_name,
        bes.name AS belly_state_name,
        es.name AS epigastrium_state_name,
-       scs.name AS scar_state_name
+       scs.name AS scar_state_name,
+       hbr.name AS heartbeat_rithm_name
 FROM appointments a
   JOIN users u ON a.doctor_id = u.id
   JOIN patients p ON a.patient_id = p.id
-  LEFT JOIN receipt_kind rk ON a.receipt_kind_id = rk.id
+  LEFT JOIN receipt_kinds rk ON a.receipt_kind_id = rk.id
   LEFT JOIN pelvis_states ps ON a.pelvis_state_id = ps.id
   LEFT JOIN fetal_bladder_states fbs ON a.fetal_bladder_state_id = fbs.id
   LEFT JOIN fetal_bladder_aligns fba ON a.fetal_bladder_align_id = fba.id
@@ -526,4 +529,5 @@ FROM appointments a
   LEFT JOIN tones_states ts ON a.tones_state_id = ts.id
   LEFT JOIN belly_states bes ON a.belly_state_id = bes.id
   LEFT JOIN belly_states es ON a.epigastrium_state_id = es.id
-  LEFT JOIN belly_states scs ON a.scar_state_id = scs.id;
+  LEFT JOIN belly_states scs ON a.scar_state_id = scs.id
+  LEFT JOIN heartbeat_rithms hbr ON a.heartbeat_rithm_id = hbr.id;
