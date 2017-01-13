@@ -62,7 +62,7 @@ COMMENT ON TABLE breath_states IS 'Типы состояния дыхания';
 CREATE INDEX ind_breath_states_id ON breath_states USING btree (id);
 CREATE UNIQUE INDEX uni_breath_states ON breath_states (lower(name));
 
-INSERT INTO breath_states (name) VALUES ('везиулярное'), ('с жестким оттенком'), ('жесткое');
+INSERT INTO breath_states (name) VALUES ('везикулярное'), ('с жестким оттенком'), ('жесткое');
 
 CREATE TABLE IF NOT EXISTS rale_states (
     "id"      serial primary key,
@@ -163,16 +163,16 @@ CREATE UNIQUE INDEX uni_heartbeat_rithms ON heartbeat_rithms (lower(name));
 
 INSERT INTO heartbeat_rithms (name) VALUES ('ритмичные'), ('аритмичные');
 
-CREATE TABLE IF NOT EXISTS reproductive_discharges (
+CREATE TABLE IF NOT EXISTS discharge_types (
     "id"      serial primary key,
     "name"    varchar(100) NOT NULL,
     "orderby" integer
 );
-COMMENT ON TABLE reproductive_discharges IS 'Типы выделений из половых путей';
-CREATE INDEX ind_reproductive_discharges_id ON reproductive_discharges USING btree (id);
-CREATE UNIQUE INDEX uni_reproductive_discharges ON reproductive_discharges (lower(name));
+COMMENT ON TABLE discharge_types IS 'Типы выделений';
+CREATE INDEX ind_discharge_types_id ON discharge_types USING btree (id);
+CREATE UNIQUE INDEX uni_discharge_types ON discharge_types (lower(name));
 
-INSERT INTO reproductive_discharges (name) VALUES ('светлые'), ('слизистые'), ('кровяные');
+INSERT INTO discharge_types (name) VALUES ('светлые'), ('слизистые'), ('кровяные');
 
 CREATE TABLE IF NOT EXISTS discharge_states (
     "id"      serial primary key,
@@ -325,8 +325,8 @@ CREATE TABLE IF NOT EXISTS appointments (
     "fetal_heartbeat_id"        integer,
     "heartbeat_rithm_id"        integer,
     "fetal_pulse"               varchar(100),
-    "reproductive_discharge_id" integer,
-    "discharge_state_id"        integer,
+    "reproductive_discharge_type_id"  integer,
+    "reproductive_discharge_state_id" integer,
     "vdm"                       varchar(20),
     "oj"                        varchar(20),
     "dspin"                     varchar(20),
@@ -344,7 +344,8 @@ CREATE TABLE IF NOT EXISTS appointments (
     "conjugate"                 varchar(50),
     "pelvis_state_id"           integer,
     "pelvis_exostosis"          varchar(100),
-    "pelvis_discharge"          varchar(100),
+    "pelvis_discharge_type_id"  integer,
+    "pelvis_discharge_state_id" integer,
     "diagnosis"                 text,
     "conclusion"                text,
     "birth_plan_use"            boolean,
@@ -424,8 +425,8 @@ COMMENT ON COLUMN appointments.fetal_align_id IS 'Выравнивание пл�
 COMMENT ON COLUMN appointments.fetal_heartbeat_id IS 'Сердцебиение плода';
 COMMENT ON COLUMN appointments.heartbeat_rithm_id IS 'Ритмичность сердцебиения'; -- +
 COMMENT ON COLUMN appointments.fetal_pulse IS 'Пульс плода';
-COMMENT ON COLUMN appointments.reproductive_discharge_id IS 'Выделения из половых путей';
-COMMENT ON COLUMN appointments.discharge_state_id IS 'Состояние выделений'; -- +
+COMMENT ON COLUMN appointments.reproductive_discharge_type_id IS 'Тип выделений из половых путей';
+COMMENT ON COLUMN appointments.reproductive_discharge_state_id IS 'Состояние выделений из половых путей'; -- +
 COMMENT ON COLUMN appointments.vdm IS 'ВДМ';
 COMMENT ON COLUMN appointments.oj IS 'ОЖ';
 COMMENT ON COLUMN appointments.dspin IS 'D.spin';
@@ -442,7 +443,9 @@ COMMENT ON COLUMN appointments.fetal_bladder_align_id IS 'Плодный пуз�
 COMMENT ON COLUMN appointments.arches IS 'Своды';
 COMMENT ON COLUMN appointments.conjugate IS 'Диагональная коньюгата';
 COMMENT ON COLUMN appointments.pelvis_state_id IS 'Костный таз';
-COMMENT ON COLUMN appointments.pelvis_discharge IS 'Выделения (костный таз)';
+COMMENT ON COLUMN appointments.pelvis_exostosis IS 'Экзостозы';
+COMMENT ON COLUMN appointments.pelvis_discharge_type_id IS 'Тип выделений (костный таз)';  -- +
+COMMENT ON COLUMN appointments.pelvis_discharge_state_id IS 'Состояние выделений (костный таз)'; -- +
 COMMENT ON COLUMN appointments.diagnosis IS 'Диагноз';
 COMMENT ON COLUMN appointments.conclusion IS 'Заключение';
 COMMENT ON COLUMN appointments.birth_plan_use IS 'Использование плана родов'; -- +
@@ -461,8 +464,8 @@ ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_bladder_aligns FOR
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_bladder_previas FOREIGN KEY (fetal_bladder_previa_id) REFERENCES fetal_bladder_previas (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_vagina_states FOREIGN KEY (vagina_state_id) REFERENCES vagina_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_devel_organs FOREIGN KEY (devel_organs_id) REFERENCES devel_organs (id);
-ALTER TABLE appointments ADD CONSTRAINT fk_appointments_reproductive_discharges FOREIGN KEY (reproductive_discharge_id) REFERENCES reproductive_discharges (id);
-ALTER TABLE appointments ADD CONSTRAINT fk_appointments_discharge_states FOREIGN KEY (discharge_state_id) REFERENCES discharge_states (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_reproductive_discharge_types FOREIGN KEY (reproductive_discharge_type_id) REFERENCES discharge_types (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_reproductive_discharge_states FOREIGN KEY (reproductive_discharge_state_id) REFERENCES discharge_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_aligns FOREIGN KEY (fetal_align_id) REFERENCES fetal_aligns (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_heartbeats FOREIGN KEY (fetal_heartbeat_id) REFERENCES fetal_heartbeats (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_fetal_previas FOREIGN KEY (fetal_previa_id) REFERENCES fetal_previas (id);
@@ -477,6 +480,7 @@ ALTER TABLE appointments ADD CONSTRAINT fk_appointments_belly_states FOREIGN KEY
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_epigastrium_states FOREIGN KEY (epigastrium_state_id) REFERENCES belly_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_scar_states FOREIGN KEY (scar_state_id) REFERENCES belly_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_heartbeat_rithms FOREIGN KEY (heartbeat_rithm_id) REFERENCES heartbeat_rithms (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_pelvis_discharge_types FOREIGN KEY (pelvis_discharge_type_id) REFERENCES discharge_types (id);
 
 CREATE OR REPLACE VIEW vw_appointments AS
 SELECT a.*,
@@ -489,8 +493,8 @@ SELECT a.*,
        fbp.name AS fetal_bladder_previa_name,
        vs.name AS vagina_state_name,
        dor.name AS devel_organs_name,
-       rd.name AS reproductive_discharge_name,
-       ds.name AS discharge_state_name,
+       rdt.name AS reproductive_discharge_type_name,
+       rds.name AS reproductive_discharge_state_name,
        fa.name AS fetal_align_name,
        fh.name AS fetal_heartbeat_name,
        fpr.name AS fetal_previa_name,
@@ -504,7 +508,9 @@ SELECT a.*,
        bes.name AS belly_state_name,
        es.name AS epigastrium_state_name,
        scs.name AS scar_state_name,
-       hbr.name AS heartbeat_rithm_name
+       hbr.name AS heartbeat_rithm_name,
+       pdt.name AS pelvis_discharge_type_name,
+       pds.name AS pelvis_discharge_state_name
 FROM appointments a
   JOIN users u ON a.doctor_id = u.id
   JOIN patients p ON a.patient_id = p.id
@@ -515,8 +521,8 @@ FROM appointments a
   LEFT JOIN fetal_bladder_previas fbp ON a.fetal_bladder_previa_id = fbp.id
   LEFT JOIN vagina_states vs ON a.vagina_state_id = vs.id
   LEFT JOIN devel_organs dor ON a.devel_organs_id = dor.id
-  LEFT JOIN reproductive_discharges rd ON a.reproductive_discharge_id = rd.id
-  LEFT JOIN discharge_states ds ON a.discharge_state_id = ds.id
+  LEFT JOIN discharge_types rdt ON a.reproductive_discharge_type_id = rdt.id
+  LEFT JOIN discharge_states rds ON a.reproductive_discharge_state_id = rds.id
   LEFT JOIN fetal_aligns fa ON a.fetal_align_id = fa.id
   LEFT JOIN fetal_heartbeats fh ON a.fetal_heartbeat_id = fh.id
   LEFT JOIN fetal_previas fpr ON a.fetal_previa_id = fpr.id
@@ -530,4 +536,6 @@ FROM appointments a
   LEFT JOIN belly_states bes ON a.belly_state_id = bes.id
   LEFT JOIN belly_states es ON a.epigastrium_state_id = es.id
   LEFT JOIN belly_states scs ON a.scar_state_id = scs.id
-  LEFT JOIN heartbeat_rithms hbr ON a.heartbeat_rithm_id = hbr.id;
+  LEFT JOIN heartbeat_rithms hbr ON a.heartbeat_rithm_id = hbr.id
+  LEFT JOIN discharge_types pdt ON a.pelvis_discharge_type_id = pdt.id
+  LEFT JOIN discharge_states pds ON a.pelvis_discharge_state_id = pds.id;

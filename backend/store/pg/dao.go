@@ -30,8 +30,6 @@ const (
         UNION ALL
         SELECT id, name, 'devel_organs' AS dict, orderby FROM devel_organs
         UNION ALL
-        SELECT id, name, 'reproductive_discharges' AS dict, orderby FROM reproductive_discharges
-        UNION ALL
         SELECT id, name, 'fetal_aligns' AS dict, orderby FROM fetal_aligns
         UNION ALL
         SELECT id, name, 'fetal_heartbeats' AS dict, orderby FROM fetal_heartbeats
@@ -60,6 +58,8 @@ const (
         UNION ALL
 		SELECT id, name, 'heartbeat_rithms' AS dict, orderby FROM heartbeat_rithms
         UNION ALL
+        SELECT id, name, 'discharge_types' AS dict, orderby FROM discharge_types
+        UNION ALL
 		SELECT id, name, 'discharge_states' AS dict, orderby FROM discharge_states
       ) t
       ORDER BY t.dict,  t.orderby, t.id`
@@ -78,18 +78,18 @@ const (
 		belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, 
 		scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling,
 		uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id,
-		heartbeat_rithm_id, fetal_pulse, reproductive_discharge_id, discharge_state_id,
+		heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id,
 		vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id,
 		bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches,
-        conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge,
+        conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id,
 		diagnosis, conclusion, birth_plan_use, birth_plan,
-        doctor_name, patient_name, receipt_kind_name, pelvis_state_name,
-		fetal_bladder_state_name, fetal_bladder_align_name, fetal_bladder_previa_name,
-		vagina_state_name, devel_organs_name, reproductive_discharge_name, discharge_state_name,
-		fetal_align_name, fetal_heartbeat_name, fetal_previa_name,
-        fetal_position_name, uteruse_state_name, skin_state_name, health_state_name,
-		breath_state_name, rale_state_name, tones_state_name, belly_state_name,
-		epigastrium_state_name, scar_state_name, heartbeat_rithm_name
+        doctor_name, patient_name, receipt_kind_name, pelvis_state_name, fetal_bladder_state_name,
+		fetal_bladder_align_name, fetal_bladder_previa_name, vagina_state_name, devel_organs_name,
+		reproductive_discharge_type_name, reproductive_discharge_state_name, fetal_align_name,
+		fetal_heartbeat_name, fetal_previa_name, fetal_position_name, uteruse_state_name,
+		skin_state_name, health_state_name,	breath_state_name, rale_state_name, tones_state_name,
+		belly_state_name, epigastrium_state_name, scar_state_name, heartbeat_rithm_name,
+		pelvis_discharge_type_name, pelvis_discharge_state_name
 	  FROM vw_appointments a
 	  WHERE id = $1`
 
@@ -131,18 +131,18 @@ const (
         throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id,
 		scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling,
         uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id,
-		heartbeat_rithm_id, fetal_pulse, reproductive_discharge_id, discharge_state_id,
+		heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id,
 		vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id,
 		bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id,
-		arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge,	diagnosis,
-		conclusion, birth_plan_use, birth_plan)
+		arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id,
+		pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan)
       VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,
         $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36,
         $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53,
         $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70,
         $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83, $84, $85, $86, $87,
-	    $88, $89, $90, $91, $92, $93, $94, $95, $96)
+	    $88, $89, $90, $91, $92, $93, $94, $95, $96, $97)
   	  RETURNING id`
 
 	appointmentUpdate = `
@@ -162,17 +162,17 @@ const (
 			  tones_state_id = $45, pulse = $46, pulse_type = $47, pressure = $48, tongue_clean = $49,
 			  tongue_wet = $50, tongue_dry = $51, tongue_coated = $52, tongue_uncoated = $53,
 			  throat = $54, belly_period = $55, belly_state_id = $56, epigastrium_state_use = $57,
-			  epigastrium_state_id = $58,
-			  scar_state_use = $59, scar_state_id = $60, peritoneal = $61, labors = $62, dysuric = $63,
-			  bowel = $64, limb_swelling = $65, uteruse_state_id = $66, fetal_position_id = $67,
-			  fetal_previa_id = $68, fetal_align_id = $69, fetal_heartbeat_id = $70, heartbeat_rithm_id = $71,
-			  fetal_pulse = $72, reproductive_discharge_id = $73, discharge_state_id = $74, vdm = $75,
-			  oj = $76, dspin = $77, dcrist = $78, dtroch = $79, cext = $80, devel_organs_id = $81,
-			  genital_anomalies = $82, vagina_state_id = $83, bishop = $84, fetal_bladder_state_id = $85,
-              fetal_bladder_previa_id = $86, fetal_bladder_align_id = $87, arches = $88, conjugate = $89,
-			  pelvis_state_id = $90, pelvis_exostosis = $91, pelvis_discharge = $92, diagnosis = $93,
-			  conclusion = $94, birth_plan_use = $95, birth_plan = $96
-        WHERE id = $97
+			  epigastrium_state_id = $58, scar_state_use = $59, scar_state_id = $60, peritoneal = $61,
+			  labors = $62, dysuric = $63, bowel = $64, limb_swelling = $65, uteruse_state_id = $66,
+			  fetal_position_id = $67, fetal_previa_id = $68, fetal_align_id = $69, fetal_heartbeat_id = $70,
+			  heartbeat_rithm_id = $71, fetal_pulse = $72, reproductive_discharge_type_id = $73,
+			  reproductive_discharge_state_id = $74, vdm = $75, oj = $76, dspin = $77, dcrist = $78,
+			  dtroch = $79, cext = $80, devel_organs_id = $81, genital_anomalies = $82, vagina_state_id = $83,
+			  bishop = $84, fetal_bladder_state_id = $85, fetal_bladder_previa_id = $86,
+			  fetal_bladder_align_id = $87, arches = $88, conjugate = $89, pelvis_state_id = $90,
+			  pelvis_exostosis = $91, pelvis_discharge_type_id = $92, pelvis_discharge_state_id = $93,
+			  diagnosis = $94, conclusion = $95, birth_plan_use = $96, birth_plan = $97
+        WHERE id = $98
 		RETURNING 1
 	  )
 	  SELECT count(*) FROM rows`
@@ -402,8 +402,8 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 		&ap.FetalHeartbeatId,
 		&ap.HeartbeatRithmId,
 		&ap.FetalPulse,
-		&ap.ReproductiveDischargeId,
-		&ap.DischargeStateId,
+		&ap.ReproductiveDischargeTypeId,
+		&ap.ReproductiveDischargeStateId,
 		&ap.Vdm,
 		&ap.Oj,
 		&ap.Dspin,
@@ -420,7 +420,9 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 		&ap.Arches,
 		&ap.Conjugate,
 		&ap.PelvisStateId,
-		&ap.PelvisDischarge,
+		&ap.PelvisExostosis,
+		&ap.PelvisDischargeTypeId,
+		&ap.PelvisDischargeStateId,
 		&ap.Diagnosis,
 		&ap.Conclusion,
 		&ap.BirthPlanUse,
@@ -434,8 +436,8 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 		&ap.FetalBladderPreviaName,
 		&ap.VaginaStateName,
 		&ap.DevelOrgansName,
-		&ap.ReproductiveDischargeName,
-		&ap.DischargeStateName,
+		&ap.ReproductiveDischargeTypeName,
+		&ap.ReproductiveDischargeStateName,
 		&ap.FetalAlignName,
 		&ap.FetalHeartbeatName,
 		&ap.FetalPreviaName,
@@ -449,7 +451,9 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 		&ap.BellyStateName,
 		&ap.EpigastriumStateName,
 		&ap.ScarStateName,
-		&ap.HeartbeatRithmName)
+		&ap.HeartbeatRithmName,
+		&ap.PelvisDischargeTypeName,
+		&ap.PelvisDischargeStateName)
 	if err != nil && err == sql.ErrNoRows {
 		err = store.ErrDataNotFound
 	}
@@ -551,8 +555,8 @@ func (d *dao) insertAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.FetalHeartbeatId,
 		ap.HeartbeatRithmId,
 		ap.FetalPulse,
-		ap.ReproductiveDischargeId,
-		ap.DischargeStateId,
+		ap.ReproductiveDischargeTypeId,
+		ap.ReproductiveDischargeStateId,
 		ap.Vdm,
 		ap.Oj,
 		ap.Dspin,
@@ -570,7 +574,8 @@ func (d *dao) insertAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.Conjugate,
 		ap.PelvisStateId,
 		ap.PelvisExostosis,
-		ap.PelvisDischarge,
+		ap.PelvisDischargeTypeId,
+		ap.PelvisDischargeStateId,
 		ap.Diagnosis,
 		ap.Conclusion,
 		ap.BirthPlanUse,
@@ -652,8 +657,8 @@ func (d *dao) updateAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.FetalHeartbeatId,
 		ap.HeartbeatRithmId,
 		ap.FetalPulse,
-		ap.ReproductiveDischargeId,
-		ap.DischargeStateId,
+		ap.ReproductiveDischargeTypeId,
+		ap.ReproductiveDischargeStateId,
 		ap.Vdm,
 		ap.Oj,
 		ap.Dspin,
@@ -671,7 +676,8 @@ func (d *dao) updateAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.Conjugate,
 		ap.PelvisStateId,
 		ap.PelvisExostosis,
-		ap.PelvisDischarge,
+		ap.PelvisDischargeTypeId,
+		ap.PelvisDischargeStateId,
 		ap.Diagnosis,
 		ap.Conclusion,
 		ap.BirthPlanUse,
