@@ -251,6 +251,28 @@ CREATE UNIQUE INDEX uni_pelvis_states ON pelvis_states (lower(name));
 
 INSERT INTO pelvis_states (name) VALUES ('без экзостозов'), ('экзостозы');
 
+CREATE TABLE IF NOT EXISTS examination_states (
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
+);
+COMMENT ON TABLE examination_states IS 'Состояние обследования';
+CREATE INDEX ind_examination_states_id ON examination_states USING btree (id);
+CREATE UNIQUE INDEX uni_examination_states ON examination_states (lower(name));
+
+INSERT INTO examination_states (name) VALUES ('обследована'), ('недообследована'), ('необследована');
+
+CREATE TABLE IF NOT EXISTS oprv_states (
+    "id"      serial primary key,
+    "name"    varchar(100) NOT NULL,
+    "orderby" integer
+);
+COMMENT ON TABLE oprv_states IS 'Состояние ОПРВ';
+CREATE INDEX ind_oprv_states_id ON oprv_states USING btree (id);
+CREATE UNIQUE INDEX uni_oprv_states ON oprv_states (lower(name));
+
+INSERT INTO oprv_states (name) VALUES ('неравномерная'), ('равномерная');
+
 CREATE TABLE IF NOT EXISTS appointments (
     "id"                        serial primary key,
     "date_receipt"              bigint,
@@ -274,16 +296,16 @@ CREATE TABLE IF NOT EXISTS appointments (
     "paritet_sv"                varchar(500),
     "paritet_nb"                varchar(500),
     "paritet_eb"                varchar(500),
-    "infection_markers"         boolean,
+    "infection_markers_state_id" integer,
     "infection_markers_desc"    varchar(100),
-    "tromboflebia"              boolean,
+    "tromboflebia_state_id"     integer,
     "tromboflebia_desc"         varchar(100),
     "first_trimester"           text,
     "second_trimester"          text,
     "third_trimester"           text,
     "history"                   text,
     "oprv"                      varchar(100),
-    "oprv_homo"                 boolean,
+    "oprv_state_id"             integer,
     "exp_by_menstruation"       varchar(100),
     "exp_by_first_visit"        varchar(100),
     "exp_by_ultra_first"        varchar(100),
@@ -374,16 +396,16 @@ COMMENT ON COLUMN appointments.paritet_a IS 'Паритет - кол-во або
 COMMENT ON COLUMN appointments.paritet_sv IS 'Паритет - кол-во самопроизвольных выкидышей'; -- +
 COMMENT ON COLUMN appointments.paritet_nb IS 'Паритет - кол-во неразвивающихся беременностей'; -- +
 COMMENT ON COLUMN appointments.paritet_eb IS 'Паритет - кол-во эктопических беременностей'; -- +
-COMMENT ON COLUMN appointments.infection_markers IS 'Течение беременности: обследование на инфекционные маркеры'; -- +
+COMMENT ON COLUMN appointments.infection_markers_state_id IS 'Течение беременности: обследование на инфекционные маркеры'; -- +
 COMMENT ON COLUMN appointments.infection_markers_desc IS 'Течение беременности: описание обследования на инфекционные маркеры'; -- +
-COMMENT ON COLUMN appointments.tromboflebia IS 'Течение беременности: обследование на наследственную тромбофлебию'; -- +
+COMMENT ON COLUMN appointments.tromboflebia_state_id IS 'Течение беременности: обследование на наследственную тромбофлебию'; -- +
 COMMENT ON COLUMN appointments.tromboflebia_desc IS 'Течение беременности: описание обследования на наследственную тромбофлебию'; -- +
 COMMENT ON COLUMN appointments.first_trimester IS 'I триместр';
 COMMENT ON COLUMN appointments.second_trimester IS 'II триместр';
 COMMENT ON COLUMN appointments.third_trimester IS 'III триместр';
 COMMENT ON COLUMN appointments.history IS 'Из анамнеза';
 COMMENT ON COLUMN appointments.oprv IS 'ОПРВ'; -- +
-COMMENT ON COLUMN appointments.oprv_homo IS 'ОПРВ (не)равномерно'; -- +
+COMMENT ON COLUMN appointments.oprv_state_id IS 'ОПРВ (не)равномерно'; -- +
 COMMENT ON COLUMN appointments.exp_by_menstruation IS 'Сроки беременности по менструации';
 COMMENT ON COLUMN appointments.exp_by_first_visit IS 'Сроки беременности по 1 явке';
 COMMENT ON COLUMN appointments.exp_by_ultra_first IS 'Сроки беременности по первому УЗИ'; -- +
@@ -481,6 +503,9 @@ ALTER TABLE appointments ADD CONSTRAINT fk_appointments_epigastrium_states FOREI
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_scar_states FOREIGN KEY (scar_state_id) REFERENCES belly_states (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_heartbeat_rithms FOREIGN KEY (heartbeat_rithm_id) REFERENCES heartbeat_rithms (id);
 ALTER TABLE appointments ADD CONSTRAINT fk_appointments_pelvis_discharge_types FOREIGN KEY (pelvis_discharge_type_id) REFERENCES discharge_types (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_infection_markers_states FOREIGN KEY (infection_markers_state_id) REFERENCES examination_states (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_tromboflebia_states FOREIGN KEY (tromboflebia_state_id) REFERENCES examination_states (id);
+ALTER TABLE appointments ADD CONSTRAINT fk_appointments_oprv_states FOREIGN KEY (oprv_state_id) REFERENCES oprv_states (id);
 
 CREATE OR REPLACE VIEW vw_appointments AS
 SELECT a.*,
@@ -510,7 +535,10 @@ SELECT a.*,
        scs.name AS scar_state_name,
        hbr.name AS heartbeat_rithm_name,
        pdt.name AS pelvis_discharge_type_name,
-       pds.name AS pelvis_discharge_state_name
+       pds.name AS pelvis_discharge_state_name,
+       imes.name AS infection_markers_state_name,
+       tes.name AS tromboflebia_state_name,
+       ops.name AS oprv_state_name
 FROM appointments a
   JOIN users u ON a.doctor_id = u.id
   JOIN patients p ON a.patient_id = p.id
@@ -538,4 +566,7 @@ FROM appointments a
   LEFT JOIN belly_states scs ON a.scar_state_id = scs.id
   LEFT JOIN heartbeat_rithms hbr ON a.heartbeat_rithm_id = hbr.id
   LEFT JOIN discharge_types pdt ON a.pelvis_discharge_type_id = pdt.id
-  LEFT JOIN discharge_states pds ON a.pelvis_discharge_state_id = pds.id;
+  LEFT JOIN discharge_states pds ON a.pelvis_discharge_state_id = pds.id
+  LEFT JOIN examination_states imes ON a.infection_markers_state_id = imes.id
+  LEFT JOIN examination_states tes ON a.tromboflebia_state_id = tes.id
+  LEFT JOIN oprv_states ops ON a.oprv_state_id = ops.id;

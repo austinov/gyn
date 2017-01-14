@@ -209,39 +209,77 @@ func createCookie(authCookieName, accessToken string) *echo.Cookie {
 
 func fillDocxCallback(appointment interface{}, doc *docx.Docx) error {
 	ap := appointment.(store.Appointment)
-	doc.Replace("[dateReceipt]", time.Unix(ap.DateReceipt, 0).Format("02-01-2006 15:04"), -1)
-	tongue := ""
-	addTongue := func(value bool, text string) {
-		if value {
-			if tongue != "" {
-				tongue += ", " + text
-			} else {
-				tongue = text
-			}
-		}
+	doc.Replace("dateReceipt", time.Unix(ap.DateReceipt, 0).Format("02-01-2006 15:04"), -1)
+
+	receiptDiagnosis := addTextWithComma(ap.ReceiptDiagnosis != "", ap.ReceiptKindName, "с диагнозом"+ap.ReceiptDiagnosis, ", ")
+	doc.Replace("receiptDiagnosis", receiptDiagnosis, -1)
+
+	paritet := addTextWithComma(ap.ParitetB != "", "", "Б - "+ap.ParitetB, ", ")
+	paritet = addTextWithComma(ap.ParitetP != "", paritet, "Р - "+ap.ParitetP, ", ")
+	paritet = addTextWithComma(ap.ParitetA != "", paritet, "А - "+ap.ParitetA, ", ")
+	paritet = addTextWithComma(ap.ParitetSV != "", paritet, "С/в - "+ap.ParitetSV, ", ")
+	paritet = addTextWithComma(ap.ParitetNB != "", paritet, "Нераз-бер. - "+ap.ParitetNB, ", ")
+	paritet = addTextWithComma(ap.ParitetEB != "", paritet, "Экт-бер. - "+ap.ParitetEB, ", ")
+	paritet = addTextWithComma(ap.Paritet != "", paritet, ap.Paritet, ", ")
+	doc.Replace("paritet", paritet, -1)
+
+	pregnancy := "на инфекционные маркеры " + ap.InfectionMarkersStateName
+	pregnancy = addTextWithComma(ap.InfectionMarkersDesc != "", pregnancy, ap.InfectionMarkersDesc, " ")
+	pregnancy = addTextWithComma(true, pregnancy, "на наследственную тромбофлебию "+ap.TromboflebiaStateName, ", ")
+	pregnancy = addTextWithComma(ap.TromboflebiaDesc != "", pregnancy, ap.TromboflebiaDesc, " ")
+	doc.Replace("pregnancy", pregnancy, -1)
+
+	oprv := ""
+	if ap.Oprv != "" {
+		oprv = "ОПРВ " + ap.Oprv + ", " + ap.OprvStateName + "\n"
 	}
-	addTongue(ap.TongueClean, "чистый")
-	addTongue(ap.TongueWet, "влажный")
-	addTongue(ap.TongueDry, "сухой")
-	addTongue(ap.TongueCoated, "обложен")
-	addTongue(ap.TongueUncoated, "не обложен")
-	doc.Replace("[tongue]", tongue, -1)
+	doc.Replace("oprv", oprv, -1)
+
+	expByUltra := addTextWithComma(ap.ExpByUltraFirst != "", "", ap.ExpByUltraFirst, "\n")
+	expByUltra = addTextWithComma(ap.ExpByUltraSecond != "", expByUltra, ap.ExpByUltraSecond, "\n")
+	expByUltra = addTextWithComma(ap.ExpByUltraThird != "", expByUltra, ap.ExpByUltraThird, "\n")
+	doc.Replace("expByUltra", expByUltra, -1)
+
+	tongue := addTextWithComma(ap.TongueClean, "", "чистый", ", ")
+	tongue = addTextWithComma(ap.TongueWet, tongue, "влажный", ", ")
+	tongue = addTextWithComma(ap.TongueDry, tongue, "сухой", ", ")
+	tongue = addTextWithComma(ap.TongueCoated, tongue, "обложен", ", ")
+	tongue = addTextWithComma(ap.TongueUncoated, tongue, "не обложен", ", ")
+	doc.Replace("tongue", tongue, -1)
+
+	bellyState := addTextWithComma(ap.EpigastriumStateUse, ap.BellyStateName, "Область эпигастрия "+ap.EpigastriumStateName, "\n")
+	bellyState = addTextWithComma(ap.ScarStateUse, bellyState, "Область послеоперационных рубцов "+ap.ScarStateName, "\n")
+	doc.Replace("bellyState", bellyState, -1)
 
 	dysuric := "нет"
 	if ap.Dysuric {
 		dysuric = "есть"
 	}
-	doc.Replace("[dysuric]", dysuric, -1)
+	doc.Replace("dysuric", dysuric, -1)
 
 	bowel := "не регулярный"
 	if ap.Bowel {
 		bowel = "регулярный"
 	}
-	doc.Replace("[bowel]", bowel, -1)
-	/*
-		fetalPreviaName + fetalAlignName
-		develOrgansName + genitalAnomalies
-		lenghtCervix + truncateCervix
-	*/
+	doc.Replace("bowel", bowel, -1)
+
+	birthPlanName, birthPlanValue := "", ""
+	if ap.BirthPlanUse {
+		birthPlanName = "План родов:"
+		birthPlanValue = ap.BirthPlan
+	}
+	doc.Replace("birthPlanN", birthPlanName, -1)
+	doc.Replace("birthPlanV", birthPlanValue, -1)
 	return nil
+}
+
+func addTextWithComma(cond bool, target, text, sep string) string {
+	if cond {
+		if target != "" {
+			target += sep + text
+		} else {
+			target = text
+		}
+	}
+	return target
 }
