@@ -3,6 +3,10 @@ listen-addr: ":8080"
 # Name of authorization cookie, default is X-App-Auth
 #auth-cookie-name: "X-App-Auth"
 
+# openssl req -x509 -nodes -newkey rsa:2048 -keyout server.key -out server.crt -days 3650
+#tls-cert-file: "./env/server.crt"
+#tls-key-file: "./env/server.key"
+
 # Path to directory contains docx templates, default is ./docx
 #docx-dir: ./docx
 

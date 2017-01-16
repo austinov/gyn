@@ -15,8 +15,10 @@ var (
 )
 
 func initMiddleware(e *echo.Echo) {
+	e.Use(middleware.Secure())
+	e.Use(middleware.CSRF())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}\n",
+		Format: "time=${time_rfc3339}, remote_ip=${remote_ip}, method=${method}, uri=${uri}, status=${status}\n",
 	}))
 }
 
