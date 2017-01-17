@@ -1,3 +1,9 @@
+﻿-- DROP DATABASE gyn;
+-- DROP ROLE gyn;
+
+-- CREATE ROLE gyn LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+-- CREATE DATABASE gyn WITH OWNER = gyn;
+
 CREATE TABLE IF NOT EXISTS users (
     "id"       serial primary key,
     "login"    varchar(100) NOT NULL,
@@ -275,6 +281,8 @@ INSERT INTO oprv_states (name) VALUES ('неравномерная'), ('равн
 
 CREATE TABLE IF NOT EXISTS appointments (
     "id"                        serial primary key,
+    "created_at"                bigint,
+    "updated_at"                bigint,
     "date_receipt"              bigint,
     "doctor_id"                 integer,
     "patient_id"                integer,
@@ -375,6 +383,8 @@ CREATE TABLE IF NOT EXISTS appointments (
 );
 
 COMMENT ON TABLE appointments IS 'Осмотры пациентов';
+COMMENT ON COLUMN appointments.created_at IS 'Дата создания записи, Unix timestamp in seconds';
+COMMENT ON COLUMN appointments.updated_at IS 'Дата изменения записи, Unix timestamp in seconds';
 COMMENT ON COLUMN appointments.date_receipt IS 'Дата приёма, Unix timestamp in seconds';
 COMMENT ON COLUMN appointments.doctor_id IS 'Дежурный врач акушер-гинеколог';
 COMMENT ON COLUMN appointments.patient_id IS 'Пациент';

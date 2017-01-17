@@ -143,6 +143,7 @@ func (h handler) GetAppointment(c echo.Context) error {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
+	c.Logger().Debugf("GetAppointment: %#v\n", ap)
 	return c.JSON(http.StatusOK, ap)
 }
 
@@ -160,6 +161,7 @@ func (h handler) GetAppointmentDocx(c echo.Context) error {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
+	c.Logger().Debugf("GetAppointmentDocx: %#v\n", ap)
 	file, err := util.FillDocx(ap, h.cfg.DocxDir+"template.docx", fillDocxCallback)
 	if err != nil {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
@@ -186,7 +188,7 @@ func (h handler) SaveAppointment(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, h.ec.ServerError(err))
 	}
 	ap.DoctorId = profile.Id
-	c.Logger().Debugf("%#v", ap)
+	c.Logger().Debugf("SaveAppointment: %#v\n", ap)
 
 	if err := h.dao.SaveAppointment(&ap); err != nil {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
@@ -211,7 +213,7 @@ func fillDocxCallback(appointment interface{}, doc *docx.Docx) error {
 	ap := appointment.(store.Appointment)
 	doc.Replace("dateReceipt", time.Unix(ap.DateReceipt, 0).Format("02-01-2006 15:04"), -1)
 
-	receiptDiagnosis := addTextWithComma(ap.ReceiptDiagnosis != "", ap.ReceiptKindName, "с диагнозом"+ap.ReceiptDiagnosis, ", ")
+	receiptDiagnosis := addTextWithComma(ap.ReceiptDiagnosis != "", ap.ReceiptKindName, "с диагнозом "+ap.ReceiptDiagnosis, ", ")
 	doc.Replace("receiptDiagnosis", receiptDiagnosis, -1)
 
 	paritet := addTextWithComma(ap.ParitetB != "", "", "Б - "+ap.ParitetB, ", ")
@@ -231,7 +233,7 @@ func fillDocxCallback(appointment interface{}, doc *docx.Docx) error {
 
 	oprv := ""
 	if ap.Oprv != "" {
-		oprv = "ОПРВ " + ap.Oprv + ", " + ap.OprvStateName + "\n"
+		oprv = "ОПВ " + ap.Oprv + ", " + ap.OprvStateName + "\n"
 	}
 	doc.Replace("oprv", oprv, -1)
 

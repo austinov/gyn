@@ -13,6 +13,8 @@ type Dictionary struct {
 
 type Appointment struct {
 	Id                             int64  `json:"id"`
+	CreatedAt                      int64  `json:"-"`
+	UpdatedAt                      int64  `json:"-"`
 	DateReceipt                    int64  `json:"dateReceipt"`
 	DoctorId                       int64  `json:"doctorId"`
 	DoctorName                     string `json:"doctorName" docx:"doctorName"`

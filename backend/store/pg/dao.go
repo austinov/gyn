@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/austinov/gyn/backend/config"
 	"github.com/austinov/gyn/backend/store"
@@ -70,7 +71,7 @@ const (
 
 	patientAppointmentSelect = `
 	  SELECT
-        id, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo,
+        id, created_at, updated_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo,
 		contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases,
         paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb,
 		infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc,
@@ -140,14 +141,14 @@ const (
 		vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id,
 		bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id,
 		arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id,
-		pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan)
+		pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan, created_at)
       VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,
         $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36,
         $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53,
         $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70,
         $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83, $84, $85, $86, $87,
-	    $88, $89, $90, $91, $92, $93, $94, $95, $96, $97)
+	    $88, $89, $90, $91, $92, $93, $94, $95, $96, $97, $98)
   	  RETURNING id`
 
 	appointmentUpdate = `
@@ -176,8 +177,8 @@ const (
 			  bishop = $84, fetal_bladder_state_id = $85, fetal_bladder_previa_id = $86,
 			  fetal_bladder_align_id = $87, arches = $88, conjugate = $89, pelvis_state_id = $90,
 			  pelvis_exostosis = $91, pelvis_discharge_type_id = $92, pelvis_discharge_state_id = $93,
-			  diagnosis = $94, conclusion = $95, birth_plan_use = $96, birth_plan = $97
-        WHERE id = $98
+			  diagnosis = $94, conclusion = $95, birth_plan_use = $96, birth_plan = $97, updated_at = $98
+        WHERE id = $99
 		RETURNING 1
 	  )
 	  SELECT count(*) FROM rows`
@@ -333,8 +334,14 @@ func (d *dao) SearchAppointments(patientName string) ([]store.Appointment, error
 
 func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 	ap := store.Appointment{}
+	var (
+		createdAt sql.NullInt64
+		updatedAt sql.NullInt64
+	)
 	err := patientAppointmentSelectStmt.QueryRow(id).Scan(
 		&ap.Id,
+		&createdAt,
+		&updatedAt,
 		&ap.DateReceipt,
 		&ap.DoctorId,
 		&ap.PatientId,
@@ -465,6 +472,12 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 	if err != nil && err == sql.ErrNoRows {
 		err = store.ErrDataNotFound
 	}
+	if createdAt.Valid {
+		ap.CreatedAt = createdAt.Int64
+	}
+	if updatedAt.Valid {
+		ap.UpdatedAt = updatedAt.Int64
+	}
 	return ap, err
 }
 
@@ -587,7 +600,8 @@ func (d *dao) insertAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.Diagnosis,
 		ap.Conclusion,
 		ap.BirthPlanUse,
-		ap.BirthPlan)
+		ap.BirthPlan,
+		time.Now().Unix())
 	return row.Scan(&ap.Id)
 }
 
@@ -690,6 +704,7 @@ func (d *dao) updateAppointment(tx *sql.Tx, ap *store.Appointment) error {
 		ap.Conclusion,
 		ap.BirthPlanUse,
 		ap.BirthPlan,
+		time.Now().Unix(),
 		ap.Id)
 	var cnt int
 	if err := row.Scan(&cnt); err != nil {
