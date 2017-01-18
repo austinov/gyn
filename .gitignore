@@ -36,4 +36,5 @@ _testmain.go
 **/backend/env/dev-server.crt
 **/backend/env/dev-server.key
 **/ui-web/dist
+**/ui-web/*.sh
 _build
