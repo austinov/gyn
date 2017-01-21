@@ -268,7 +268,7 @@ func (d *dao) Authenticate(login, password string) error {
 
 func (d *dao) GetProfile(login string) (store.Profile, error) {
 	var (
-		id   int64
+		id   int32
 		name string
 	)
 	err := userProfileSelectStmt.QueryRow(login).Scan(&id, &name)
@@ -286,7 +286,7 @@ func (d *dao) GetDictionaries() (map[string][]store.Dictionary, error) {
 	result := make(map[string][]store.Dictionary)
 	for rows.Next() {
 		var (
-			id         int64
+			id         int32
 			name, dict string
 		)
 		if err := rows.Scan(&id, &name, &dict); err != nil {
