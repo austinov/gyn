@@ -204,6 +204,10 @@ func New(cfg config.DBConfig) store.Dao {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("failed to ping database: %s", err)
+	}
 	userPasswordHashSelectStmt, err = db.Prepare(userPasswordHashSelect)
 	if err != nil {
 		log.Fatal(err)
@@ -469,8 +473,11 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 		&ap.HeartbeatRithmName,
 		&ap.PelvisDischargeTypeName,
 		&ap.PelvisDischargeStateName)
-	if err != nil && err == sql.ErrNoRows {
-		err = store.ErrDataNotFound
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = store.ErrDataNotFound
+		}
+		return ap, err
 	}
 	if createdAt.Valid {
 		ap.CreatedAt = createdAt.Int64
@@ -478,7 +485,7 @@ func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
 	if updatedAt.Valid {
 		ap.UpdatedAt = updatedAt.Int64
 	}
-	return ap, err
+	return ap, nil
 }
 
 func (d *dao) SaveAppointment(ap *store.Appointment) error {
