@@ -16,7 +16,7 @@ type Dao interface {
 	Authenticate(login, password string) error
 	GetProfile(login string) (Profile, error)
 	GetDictionaries() (map[string][]Dictionary, error)
-	SearchAppointments(patientName string) ([]Appointment, error)
-	GetAppointment(id int64) (Appointment, error)
-	SaveAppointment(ap *Appointment) error
+	SearchAppointments(patientName string) ([]AppointmentView, error)
+	GetAppointment(id int64) (AppointmentView, error)
+	SaveAppointment(ap *AppointmentView) error
 }

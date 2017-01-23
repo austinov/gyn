@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/austinov/gyn/backend/config"
 	"github.com/austinov/gyn/backend/store"
@@ -13,13 +12,13 @@ import (
 )
 
 const (
-	userPasswordHashSelect = `
+	selectUserPasswordHashSql = `
 	  SELECT psw_hash FROM users WHERE login = $1`
 
-	userProfileSelect = `
+	selectUserProfileSql = `
 	  SELECT id, name FROM users WHERE login = $1`
 
-	dictionariesSelect = `
+	selectDictionariesSql = `
 	  SELECT id, name, dict FROM (
         SELECT id, name, 'pelvis_states' AS dict, orderby FROM pelvis_states
         UNION ALL
@@ -69,37 +68,7 @@ const (
       ) t
       ORDER BY t.dict,  t.orderby, t.id`
 
-	patientAppointmentSelect = `
-	  SELECT
-        id, created_at, updated_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo,
-		contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases,
-        paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb,
-		infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc,
-		first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id,
-        exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second,
-		exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph, 
-		breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type, pressure,
-        tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat,
-		belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, 
-		scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling,
-		uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id,
-		heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id,
-		vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id,
-		bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches,
-        conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id,
-		diagnosis, conclusion, birth_plan_use, birth_plan,
-        doctor_name, patient_name, receipt_kind_name, pelvis_state_name, infection_markers_state_name,
-		tromboflebia_state_name, oprv_state_name, fetal_bladder_state_name,
-		fetal_bladder_align_name, fetal_bladder_previa_name, vagina_state_name, devel_organs_name,
-		reproductive_discharge_type_name, reproductive_discharge_state_name, fetal_align_name,
-		fetal_heartbeat_name, fetal_previa_name, fetal_position_name, uteruse_state_name,
-		skin_state_name, health_state_name,	breath_state_name, rale_state_name, tones_state_name,
-		belly_state_name, epigastrium_state_name, scar_state_name, heartbeat_rithm_name,
-		pelvis_discharge_type_name, pelvis_discharge_state_name
-	  FROM vw_appointments a
-	  WHERE id = $1`
-
-	patientInsert = `
+	insertPatientSql = `
       WITH s AS (
           SELECT id
           FROM patients
@@ -114,7 +83,7 @@ const (
       UNION ALL
       SELECT id FROM s`
 
-	appointmentsSelect = `
+	searchAppointmentsSql = `
 	  SELECT a.id, u.name AS doctor_name, p.name AS patient_name, a.date_receipt
 	  FROM appointments a
         JOIN users u ON a.doctor_id = u.id
@@ -122,77 +91,14 @@ const (
 	  WHERE p.name LIKE $1
 	  ORDER BY a.date_receipt DESC, p.name
 	  LIMIT 100`
-
-	appointmentInsert = `
-      INSERT INTO appointments (
-        date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo,
-		contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases,
-        paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb,
-		infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc,
-		first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id,
-        exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second,
-		exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph,
-		breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type,
-        pressure, tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated,
-        throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id,
-		scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling,
-        uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id,
-		heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id,
-		vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id,
-		bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id,
-		arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id,
-		pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan, created_at)
-      VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,
-        $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36,
-        $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53,
-        $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70,
-        $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83, $84, $85, $86, $87,
-	    $88, $89, $90, $91, $92, $93, $94, $95, $96, $97, $98)
-  	  RETURNING id`
-
-	appointmentUpdate = `
-	  WITH rows AS (
-        UPDATE appointments
-          SET date_receipt = $1, doctor_id = $2, patient_id = $3, receipt_kind_id = $4,
-		      receipt_diagnosis = $5, alergo = $6, contact_infected = $7, hiv = $8,
-			  transfusion = $9, dyscountry = $10, smoking = $11, drugs = $12, inheritance = $13,
-			  gyndiseases = $14, paritet = $15, paritet_b = $16, paritet_p = $17, paritet_a = $18,
-			  paritet_sv = $19, paritet_nb = $20, paritet_eb = $21, infection_markers_state_id = $22,
-			  infection_markers_desc = $23, tromboflebia_state_id = $24, tromboflebia_desc = $25,
-			  first_trimester = $26, second_trimester = $27, third_trimester = $28,
-              history = $29, oprv = $30, oprv_state_id = $31, exp_by_menstruation = $32,
-			  exp_by_first_visit = $33, exp_by_ultra_first = $34, exp_by_ultra_second = $35,
-			  exp_by_ultra_third = $36, health_state_id = $37, claims = $38, head = $39, vision = $40,
-			  skin_state_id = $41, lymph = $42, breath_state_id = $43, rale_state_id = $44,
-			  tones_state_id = $45, pulse = $46, pulse_type = $47, pressure = $48, tongue_clean = $49,
-			  tongue_wet = $50, tongue_dry = $51, tongue_coated = $52, tongue_uncoated = $53,
-			  throat = $54, belly_period = $55, belly_state_id = $56, epigastrium_state_use = $57,
-			  epigastrium_state_id = $58, scar_state_use = $59, scar_state_id = $60, peritoneal = $61,
-			  labors = $62, dysuric = $63, bowel = $64, limb_swelling = $65, uteruse_state_id = $66,
-			  fetal_position_id = $67, fetal_previa_id = $68, fetal_align_id = $69, fetal_heartbeat_id = $70,
-			  heartbeat_rithm_id = $71, fetal_pulse = $72, reproductive_discharge_type_id = $73,
-			  reproductive_discharge_state_id = $74, vdm = $75, oj = $76, dspin = $77, dcrist = $78,
-			  dtroch = $79, cext = $80, devel_organs_id = $81, genital_anomalies = $82, vagina_state_id = $83,
-			  bishop = $84, fetal_bladder_state_id = $85, fetal_bladder_previa_id = $86,
-			  fetal_bladder_align_id = $87, arches = $88, conjugate = $89, pelvis_state_id = $90,
-			  pelvis_exostosis = $91, pelvis_discharge_type_id = $92, pelvis_discharge_state_id = $93,
-			  diagnosis = $94, conclusion = $95, birth_plan_use = $96, birth_plan = $97, updated_at = $98
-        WHERE id = $99
-		RETURNING 1
-	  )
-	  SELECT count(*) FROM rows`
 )
 
 var (
-	userPasswordHashSelectStmt   *sql.Stmt
-	userProfileSelectStmt        *sql.Stmt
-	dictionariesSelectStmt       *sql.Stmt
-	patientAppointmentSelectStmt *sql.Stmt
-	patientInsertStmt            *sql.Stmt
-	appointmentsSelectStmt       *sql.Stmt
-	appointmentInsertStmt        *sql.Stmt
-	appointmentUpdateStmt        *sql.Stmt
+	selectUserPasswordHashStmt *sql.Stmt
+	selectUserProfileStmt      *sql.Stmt
+	selectDictionariesStmt     *sql.Stmt
+	insertPatientStmt          *sql.Stmt
+	searchAppointmentsStmt     *sql.Stmt
 )
 
 type dao struct {
@@ -208,35 +114,35 @@ func New(cfg config.DBConfig) store.Dao {
 	if err != nil {
 		log.Fatalf("failed to ping database: %s", err)
 	}
-	userPasswordHashSelectStmt, err = db.Prepare(userPasswordHashSelect)
+	selectUserPasswordHashStmt, err = db.Prepare(selectUserPasswordHashSql)
 	if err != nil {
 		log.Fatal(err)
 	}
-	userProfileSelectStmt, err = db.Prepare(userProfileSelect)
+	selectUserProfileStmt, err = db.Prepare(selectUserProfileSql)
 	if err != nil {
 		log.Fatal(err)
 	}
-	dictionariesSelectStmt, err = db.Prepare(dictionariesSelect)
+	selectDictionariesStmt, err = db.Prepare(selectDictionariesSql)
 	if err != nil {
 		log.Fatal(err)
 	}
-	patientAppointmentSelectStmt, err = db.Prepare(patientAppointmentSelect)
+	selectAppointmentViewByIdStmt, err = db.Prepare(selectAppointmentViewByIdSql)
 	if err != nil {
 		log.Fatal(err)
 	}
-	patientInsertStmt, err = db.Prepare(patientInsert)
+	insertPatientStmt, err = db.Prepare(insertPatientSql)
 	if err != nil {
 		log.Fatal(err)
 	}
-	appointmentInsertStmt, err = db.Prepare(appointmentInsert)
+	insertAppointmentStmt, err = db.Prepare(insertAppointmentSql)
 	if err != nil {
 		log.Fatal(err)
 	}
-	appointmentUpdateStmt, err = db.Prepare(appointmentUpdate)
+	updateAppointmentStmt, err = db.Prepare(updateAppointmentSql)
 	if err != nil {
 		log.Fatal(err)
 	}
-	appointmentsSelectStmt, err = db.Prepare(appointmentsSelect)
+	searchAppointmentsStmt, err = db.Prepare(searchAppointmentsSql)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -246,14 +152,14 @@ func New(cfg config.DBConfig) store.Dao {
 }
 
 func (d *dao) Close() error {
-	userPasswordHashSelectStmt.Close()
-	userProfileSelectStmt.Close()
-	dictionariesSelectStmt.Close()
-	patientAppointmentSelectStmt.Close()
-	patientInsertStmt.Close()
-	appointmentsSelectStmt.Close()
-	appointmentInsertStmt.Close()
-	appointmentUpdateStmt.Close()
+	selectUserPasswordHashStmt.Close()
+	selectUserProfileStmt.Close()
+	selectDictionariesStmt.Close()
+	insertPatientStmt.Close()
+	searchAppointmentsStmt.Close()
+	selectAppointmentViewByIdStmt.Close()
+	insertAppointmentStmt.Close()
+	updateAppointmentStmt.Close()
 	d.db.Close()
 	return nil
 }
@@ -261,7 +167,7 @@ func (d *dao) Close() error {
 func (d *dao) Authenticate(login, password string) error {
 	var hash string
 	login = strings.ToLower(login)
-	if err := userPasswordHashSelectStmt.QueryRow(login).Scan(&hash); err != nil {
+	if err := selectUserPasswordHashStmt.QueryRow(login).Scan(&hash); err != nil {
 		return err
 	}
 	if err := util.CompareHashAndText(hash, password); err == nil {
@@ -275,7 +181,7 @@ func (d *dao) GetProfile(login string) (store.Profile, error) {
 		id   int32
 		name string
 	)
-	err := userProfileSelectStmt.QueryRow(login).Scan(&id, &name)
+	err := selectUserProfileStmt.QueryRow(login).Scan(&id, &name)
 	return store.Profile{
 		Id:       id,
 		UserName: name,
@@ -283,7 +189,7 @@ func (d *dao) GetProfile(login string) (store.Profile, error) {
 }
 
 func (d *dao) GetDictionaries() (map[string][]store.Dictionary, error) {
-	rows, err := dictionariesSelectStmt.Query()
+	rows, err := selectDictionariesStmt.Query()
 	if err != nil {
 		return nil, err
 	}
@@ -309,12 +215,12 @@ func (d *dao) GetDictionaries() (map[string][]store.Dictionary, error) {
 	return result, rows.Err()
 }
 
-func (d *dao) SearchAppointments(patientName string) ([]store.Appointment, error) {
-	rows, err := appointmentsSelectStmt.Query("%" + patientName + "%")
+func (d *dao) SearchAppointments(patientName string) ([]store.AppointmentView, error) {
+	rows, err := searchAppointmentsStmt.Query("%" + patientName + "%")
 	if err != nil {
 		return nil, err
 	}
-	result := make([]store.Appointment, 0)
+	result := make([]store.AppointmentView, 0)
 	for rows.Next() {
 		var (
 			id, dateReceipt         int64
@@ -326,399 +232,50 @@ func (d *dao) SearchAppointments(patientName string) ([]store.Appointment, error
 			}
 			return nil, err
 		}
-		result = append(result, store.Appointment{
-			Id:          id,
+		result = append(result, store.AppointmentView{
+			Appointment: store.Appointment{
+				Id:          id,
+				DateReceipt: dateReceipt,
+			},
 			DoctorName:  doctorName,
 			PatientName: patientName,
-			DateReceipt: dateReceipt,
 		})
 	}
 	return result, rows.Err()
 }
 
-func (d *dao) GetAppointment(id int64) (store.Appointment, error) {
-	ap := store.Appointment{}
-	var (
-		createdAt sql.NullInt64
-		updatedAt sql.NullInt64
-	)
-	err := patientAppointmentSelectStmt.QueryRow(id).Scan(
-		&ap.Id,
-		&createdAt,
-		&updatedAt,
-		&ap.DateReceipt,
-		&ap.DoctorId,
-		&ap.PatientId,
-		&ap.ReceiptKindId,
-		&ap.ReceiptDiagnosis,
-		&ap.Alergo,
-		&ap.ContactInfected,
-		&ap.Hiv,
-		&ap.Transfusion,
-		&ap.Dyscountry,
-		&ap.Smoking,
-		&ap.Drugs,
-		&ap.Inheritance,
-		&ap.Gyndiseases,
-		&ap.Paritet,
-		&ap.ParitetB,
-		&ap.ParitetP,
-		&ap.ParitetA,
-		&ap.ParitetSV,
-		&ap.ParitetNB,
-		&ap.ParitetEB,
-		&ap.InfectionMarkersStateId,
-		&ap.InfectionMarkersDesc,
-		&ap.TromboflebiaStateId,
-		&ap.TromboflebiaDesc,
-		&ap.FirstTrimester,
-		&ap.SecondTrimester,
-		&ap.ThirdTrimester,
-		&ap.History,
-		&ap.Oprv,
-		&ap.OprvStateId,
-		&ap.ExpByMenstruation,
-		&ap.ExpByFirstVisit,
-		&ap.ExpByUltraFirst,
-		&ap.ExpByUltraSecond,
-		&ap.ExpByUltraThird,
-		&ap.HealthStateId,
-		&ap.Claims,
-		&ap.Head,
-		&ap.Vision,
-		&ap.SkinStateId,
-		&ap.Lymph,
-		&ap.BreathStateId,
-		&ap.RaleStateId,
-		&ap.TonesStateId,
-		&ap.Pulse,
-		&ap.PulseType,
-		&ap.Pressure,
-		&ap.TongueClean,
-		&ap.TongueWet,
-		&ap.TongueDry,
-		&ap.TongueCoated,
-		&ap.TongueUncoated,
-		&ap.Throat,
-		&ap.BellyPeriod,
-		&ap.BellyStateId,
-		&ap.EpigastriumStateUse,
-		&ap.EpigastriumStateId,
-		&ap.ScarStateUse,
-		&ap.ScarStateId,
-		&ap.Peritoneal,
-		&ap.Labors,
-		&ap.Dysuric,
-		&ap.Bowel,
-		&ap.LimbSwelling,
-		&ap.UteruseStateId,
-		&ap.FetalPositionId,
-		&ap.FetalPreviaId,
-		&ap.FetalAlignId,
-		&ap.FetalHeartbeatId,
-		&ap.HeartbeatRithmId,
-		&ap.FetalPulse,
-		&ap.ReproductiveDischargeTypeId,
-		&ap.ReproductiveDischargeStateId,
-		&ap.Vdm,
-		&ap.Oj,
-		&ap.Dspin,
-		&ap.Dcrist,
-		&ap.Dtroch,
-		&ap.Cext,
-		&ap.DevelOrgansId,
-		&ap.GenitalAnomalies,
-		&ap.VaginaStateId,
-		&ap.Bishop,
-		&ap.FetalBladderStateId,
-		&ap.FetalBladderPreviaId,
-		&ap.FetalBladderAlignId,
-		&ap.Arches,
-		&ap.Conjugate,
-		&ap.PelvisStateId,
-		&ap.PelvisExostosis,
-		&ap.PelvisDischargeTypeId,
-		&ap.PelvisDischargeStateId,
-		&ap.Diagnosis,
-		&ap.Conclusion,
-		&ap.BirthPlanUse,
-		&ap.BirthPlan,
-		&ap.DoctorName,
-		&ap.PatientName,
-		&ap.ReceiptKindName,
-		&ap.PelvisStateName,
-		&ap.InfectionMarkersStateName,
-		&ap.TromboflebiaStateName,
-		&ap.OprvStateName,
-		&ap.FetalBladderStateName,
-		&ap.FetalBladderAlignName,
-		&ap.FetalBladderPreviaName,
-		&ap.VaginaStateName,
-		&ap.DevelOrgansName,
-		&ap.ReproductiveDischargeTypeName,
-		&ap.ReproductiveDischargeStateName,
-		&ap.FetalAlignName,
-		&ap.FetalHeartbeatName,
-		&ap.FetalPreviaName,
-		&ap.FetalPositionName,
-		&ap.UteruseStateName,
-		&ap.SkinStateName,
-		&ap.HealthStateName,
-		&ap.BreathStateName,
-		&ap.RaleStateName,
-		&ap.TonesStateName,
-		&ap.BellyStateName,
-		&ap.EpigastriumStateName,
-		&ap.ScarStateName,
-		&ap.HeartbeatRithmName,
-		&ap.PelvisDischargeTypeName,
-		&ap.PelvisDischargeStateName)
+func (d *dao) GetAppointment(id int64) (store.AppointmentView, error) {
+	ap, err := getAppointmentViewById(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			err = store.ErrDataNotFound
 		}
-		return ap, err
 	}
-	if createdAt.Valid {
-		ap.CreatedAt = createdAt.Int64
-	}
-	if updatedAt.Valid {
-		ap.UpdatedAt = updatedAt.Int64
-	}
-	return ap, nil
+	return ap, err
 }
 
-func (d *dao) SaveAppointment(ap *store.Appointment) error {
+func (d *dao) SaveAppointment(apv *store.AppointmentView) error {
 	tx, err := d.db.Begin()
 	if err != nil {
 		return err
 	}
-	if err := tx.Stmt(patientInsertStmt).QueryRow(strings.ToLower(ap.PatientName), ap.PatientName).Scan(&ap.PatientId); err != nil {
+	if err := tx.Stmt(insertPatientStmt).QueryRow(strings.ToLower(apv.PatientName), apv.PatientName).Scan(&apv.PatientId); err != nil {
 		tx.Rollback()
 		return err
 	}
+	ap := apv.Appointment
 	if ap.Id == 0 {
-		err = d.insertAppointment(tx, ap)
+		err = insertAppointment(tx, &ap)
 	} else {
-		err = d.updateAppointment(tx, ap)
+		cnt, _err := updateAppointment(tx, &ap)
+		if cnt != 1 {
+			return store.ErrDataNotUpdated
+		}
+		err = _err
 	}
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 	return tx.Commit()
-}
-
-func (d *dao) insertAppointment(tx *sql.Tx, ap *store.Appointment) error {
-	row := tx.Stmt(appointmentInsertStmt).QueryRow(
-		ap.DateReceipt,
-		ap.DoctorId,
-		ap.PatientId,
-		ap.ReceiptKindId,
-		ap.ReceiptDiagnosis,
-		ap.Alergo,
-		ap.ContactInfected,
-		ap.Hiv,
-		ap.Transfusion,
-		ap.Dyscountry,
-		ap.Smoking,
-		ap.Drugs,
-		ap.Inheritance,
-		ap.Gyndiseases,
-		ap.Paritet,
-		ap.ParitetB,
-		ap.ParitetP,
-		ap.ParitetA,
-		ap.ParitetSV,
-		ap.ParitetNB,
-		ap.ParitetEB,
-		ap.InfectionMarkersStateId,
-		ap.InfectionMarkersDesc,
-		ap.TromboflebiaStateId,
-		ap.TromboflebiaDesc,
-		ap.FirstTrimester,
-		ap.SecondTrimester,
-		ap.ThirdTrimester,
-		ap.History,
-		ap.Oprv,
-		ap.OprvStateId,
-		ap.ExpByMenstruation,
-		ap.ExpByFirstVisit,
-		ap.ExpByUltraFirst,
-		ap.ExpByUltraSecond,
-		ap.ExpByUltraThird,
-		ap.HealthStateId,
-		ap.Claims,
-		ap.Head,
-		ap.Vision,
-		ap.SkinStateId,
-		ap.Lymph,
-		ap.BreathStateId,
-		ap.RaleStateId,
-		ap.TonesStateId,
-		ap.Pulse,
-		ap.PulseType,
-		ap.Pressure,
-		ap.TongueClean,
-		ap.TongueWet,
-		ap.TongueDry,
-		ap.TongueCoated,
-		ap.TongueUncoated,
-		ap.Throat,
-		ap.BellyPeriod,
-		ap.BellyStateId,
-		ap.EpigastriumStateUse,
-		ap.EpigastriumStateId,
-		ap.ScarStateUse,
-		ap.ScarStateId,
-		ap.Peritoneal,
-		ap.Labors,
-		ap.Dysuric,
-		ap.Bowel,
-		ap.LimbSwelling,
-		ap.UteruseStateId,
-		ap.FetalPositionId,
-		ap.FetalPreviaId,
-		ap.FetalAlignId,
-		ap.FetalHeartbeatId,
-		ap.HeartbeatRithmId,
-		ap.FetalPulse,
-		ap.ReproductiveDischargeTypeId,
-		ap.ReproductiveDischargeStateId,
-		ap.Vdm,
-		ap.Oj,
-		ap.Dspin,
-		ap.Dcrist,
-		ap.Dtroch,
-		ap.Cext,
-		ap.DevelOrgansId,
-		ap.GenitalAnomalies,
-		ap.VaginaStateId,
-		ap.Bishop,
-		ap.FetalBladderStateId,
-		ap.FetalBladderPreviaId,
-		ap.FetalBladderAlignId,
-		ap.Arches,
-		ap.Conjugate,
-		ap.PelvisStateId,
-		ap.PelvisExostosis,
-		ap.PelvisDischargeTypeId,
-		ap.PelvisDischargeStateId,
-		ap.Diagnosis,
-		ap.Conclusion,
-		ap.BirthPlanUse,
-		ap.BirthPlan,
-		time.Now().Unix())
-	return row.Scan(&ap.Id)
-}
-
-func (d *dao) updateAppointment(tx *sql.Tx, ap *store.Appointment) error {
-	row := tx.Stmt(appointmentUpdateStmt).QueryRow(
-		ap.DateReceipt,
-		ap.DoctorId,
-		ap.PatientId,
-		ap.ReceiptKindId,
-		ap.ReceiptDiagnosis,
-		ap.Alergo,
-		ap.ContactInfected,
-		ap.Hiv,
-		ap.Transfusion,
-		ap.Dyscountry,
-		ap.Smoking,
-		ap.Drugs,
-		ap.Inheritance,
-		ap.Gyndiseases,
-		ap.Paritet,
-		ap.ParitetB,
-		ap.ParitetP,
-		ap.ParitetA,
-		ap.ParitetSV,
-		ap.ParitetNB,
-		ap.ParitetEB,
-		ap.InfectionMarkersStateId,
-		ap.InfectionMarkersDesc,
-		ap.TromboflebiaStateId,
-		ap.TromboflebiaDesc,
-		ap.FirstTrimester,
-		ap.SecondTrimester,
-		ap.ThirdTrimester,
-		ap.History,
-		ap.Oprv,
-		ap.OprvStateId,
-		ap.ExpByMenstruation,
-		ap.ExpByFirstVisit,
-		ap.ExpByUltraFirst,
-		ap.ExpByUltraSecond,
-		ap.ExpByUltraThird,
-		ap.HealthStateId,
-		ap.Claims,
-		ap.Head,
-		ap.Vision,
-		ap.SkinStateId,
-		ap.Lymph,
-		ap.BreathStateId,
-		ap.RaleStateId,
-		ap.TonesStateId,
-		ap.Pulse,
-		ap.PulseType,
-		ap.Pressure,
-		ap.TongueClean,
-		ap.TongueWet,
-		ap.TongueDry,
-		ap.TongueCoated,
-		ap.TongueUncoated,
-		ap.Throat,
-		ap.BellyPeriod,
-		ap.BellyStateId,
-		ap.EpigastriumStateUse,
-		ap.EpigastriumStateId,
-		ap.ScarStateUse,
-		ap.ScarStateId,
-		ap.Peritoneal,
-		ap.Labors,
-		ap.Dysuric,
-		ap.Bowel,
-		ap.LimbSwelling,
-		ap.UteruseStateId,
-		ap.FetalPositionId,
-		ap.FetalPreviaId,
-		ap.FetalAlignId,
-		ap.FetalHeartbeatId,
-		ap.HeartbeatRithmId,
-		ap.FetalPulse,
-		ap.ReproductiveDischargeTypeId,
-		ap.ReproductiveDischargeStateId,
-		ap.Vdm,
-		ap.Oj,
-		ap.Dspin,
-		ap.Dcrist,
-		ap.Dtroch,
-		ap.Cext,
-		ap.DevelOrgansId,
-		ap.GenitalAnomalies,
-		ap.VaginaStateId,
-		ap.Bishop,
-		ap.FetalBladderStateId,
-		ap.FetalBladderPreviaId,
-		ap.FetalBladderAlignId,
-		ap.Arches,
-		ap.Conjugate,
-		ap.PelvisStateId,
-		ap.PelvisExostosis,
-		ap.PelvisDischargeTypeId,
-		ap.PelvisDischargeStateId,
-		ap.Diagnosis,
-		ap.Conclusion,
-		ap.BirthPlanUse,
-		ap.BirthPlan,
-		time.Now().Unix(),
-		ap.Id)
-	var cnt int
-	if err := row.Scan(&cnt); err != nil {
-		return err
-	}
-	if cnt != 1 {
-		return store.ErrDataNotUpdated
-	}
-	return nil
 }

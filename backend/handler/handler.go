@@ -175,7 +175,7 @@ func (h handler) GetAppointmentDocx(c echo.Context) error {
 }
 
 func (h handler) SaveAppointment(c echo.Context) error {
-	var ap store.Appointment
+	var ap store.AppointmentView
 	err := c.Bind(&ap)
 	if err != nil {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
@@ -210,7 +210,7 @@ func createCookie(authCookieName, accessToken string) *echo.Cookie {
 }
 
 func fillDocxCallback(appointment interface{}, doc *docx.Docx) error {
-	ap := appointment.(store.Appointment)
+	ap := appointment.(store.AppointmentView)
 	doc.Replace("dateReceipt", time.Unix(ap.DateReceipt, 0).Format("02-01-2006 15:04"), -1)
 
 	receiptDiagnosis := addTextWithComma(ap.ReceiptDiagnosis != "", ap.ReceiptKindName, "с диагнозом "+ap.ReceiptDiagnosis, ", ")
