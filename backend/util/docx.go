@@ -21,15 +21,8 @@ func FillDocx(appointment interface{}, templatePath string, cb FillDocxCallback)
 	tmpDocx := doc.Editable()
 	// retrieve all fields of struct
 	fields := structs.Fields(appointment)
-	for _, field := range fields {
-		// fill document only for field with tag 'docx'
-		if tag := field.Tag("docx"); tag != "" {
-			val, err := decode(field.Value(), field.Kind())
-			if err != nil {
-				return nil, fmt.Errorf("decode error of field %s: %#v", field.Name(), err)
-			}
-			tmpDocx.Replace(tag, val, -1)
-		}
+	for _, f := range fields {
+		processField(f, tmpDocx)
 	}
 	// execute callback to fill some fields
 	if cb != nil {
@@ -44,6 +37,24 @@ func FillDocx(appointment interface{}, templatePath string, cb FillDocxCallback)
 	}
 	tmpDocx.WriteToFile(file.Name())
 	return file, nil
+}
+
+func processField(field *structs.Field, doc *docx.Docx) error {
+	if field.IsEmbedded() {
+		fields := structs.Fields(field.Value())
+		for _, f := range fields {
+			processField(f, doc)
+		}
+	}
+	// fill document only for field with tag 'docx'
+	if tag := field.Tag("docx"); tag != "" {
+		val, err := decode(field.Value(), field.Kind())
+		if err != nil {
+			return fmt.Errorf("decode error of field %s: %#v", field.Name(), err)
+		}
+		doc.Replace(tag, val, -1)
+	}
+	return nil
 }
 
 func decode(data interface{}, dataKind reflect.Kind) (string, error) {
