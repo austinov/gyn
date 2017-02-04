@@ -11,7 +11,7 @@ type Dictionary struct {
 	Name string `json:"name"`
 }
 
-//go:generate $GOPATH/src/github.com/austinov/go-recipes/genorm/genorm -dst-path ./pg -dst-pack pg .
+//go:generate $GOPATH/src/github.com/austinov/go-recipes/genorm/genorm -dst-path ./pg .
 
 //genorm:appointments
 type Appointment struct {

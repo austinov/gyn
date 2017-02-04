@@ -4,8 +4,8 @@ set -v
 
 # (re)create empty DB
 
-dropdb gyn 
-sudo -u postgres dropuser $USER 
+dropdb gyn
+sudo -u postgres dropuser $USER
 sudo -u postgres createuser -d $USER
 createdb gyn
 

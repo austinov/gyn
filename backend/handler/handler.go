@@ -190,12 +190,13 @@ func (h handler) SaveAppointment(c echo.Context) error {
 	ap.DoctorId = profile.Id
 	c.Logger().Debugf("SaveAppointment: %#v\n", ap)
 
-	if err := h.dao.SaveAppointment(&ap); err != nil {
+	id, err := h.dao.SaveAppointment(ap)
+	if err != nil {
 		c.Logger().Debugf("%+v", errors.WithStack(err))
 		return c.JSON(http.StatusInternalServerError, h.ec.ServerError(err))
 	}
 	reply := saveReply{
-		Id: ap.Id,
+		Id: id,
 	}
 	return c.JSON(http.StatusOK, reply)
 }

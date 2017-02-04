@@ -20,4 +20,4 @@ jwt-token:
 db:
   type: pg
   connection-string: "dbname=gyn host=/run/postgresql/"
-  #connection-string: "dbname=gyn host=pgdb sslmode=disable user=postgres"
+  #connection-string: "dbname=gyn host=pgdb sslmode=disable user=gyn"

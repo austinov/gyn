@@ -98,27 +98,37 @@ import date from '../utils/date';
         <p class="text-center"><strong>Паритет</strong></p>
       </div>
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-12">
           <label class="control-label">Б</label>
           <input type="text" class="form-control" name="paritetB" placeholder="текст" value="{ appointment.paritetB }">
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <label class="control-label">Р</label>
           <input type="text" class="form-control" name="paritetP" placeholder="текст" value="{ appointment.paritetP }">
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <label class="control-label">А</label>
           <input type="text" class="form-control" name="paritetA" placeholder="текст" value="{ appointment.paritetA }">
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <label class="control-label">С/в</label>
           <input type="text" class="form-control" name="paritetSV" placeholder="текст" value="{ appointment.paritetSV }">
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <label class="control-label">Нераз-бер.</label>
           <input type="text" class="form-control" name="paritetNB" placeholder="текст" value="{ appointment.paritetNB }">
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <label class="control-label">Экт-бер.</label>
           <input type="text" class="form-control" name="paritetEB" placeholder="текст" value="{ appointment.paritetEB }">
         </div>
@@ -530,7 +540,7 @@ import date from '../utils/date';
       <div class="row">
         <div class="col-md-12">
           <p><strong>Заключение</strong></p>
-          <textarea class="form-control" rows="3" name="conclusion" placeholder="произвольный текст" value="{ appointment.conclusion }"></textarea>
+          <textarea class="form-control" rows="4" name="conclusion" placeholder="произвольный текст" value="{ appointment.conclusion }"></textarea>
         </div>
       </div>
       <div class="row">
@@ -538,7 +548,7 @@ import date from '../utils/date';
           <label class="checkbox-inline">
             <input type="checkbox" name="birthPlanUse" value="{ appointment.birthPlanUse }" checked="{ appointment.birthPlanUse }" onclick="{ birthPlanCheck }">План родов
           </label>
-          <textarea class="form-control" rows="6" name="birthPlan" placeholder="произвольный текст" value="{ appointment.birthPlan }" readonly="{ disableBirthPlan() }"></textarea>
+          <textarea class="form-control" rows="5" name="birthPlan" placeholder="произвольный текст" value="{ appointment.birthPlan }" readonly="{ disableBirthPlan() }"></textarea>
         </div>
       </div>
       <br/>

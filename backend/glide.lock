@@ -1,5 +1,5 @@
 hash: afef2ee40750d14e34fe9d4fa0ff542b7d389ed5fd9bf44fa17bc89f8d4b83ed
-updated: 2017-01-19T00:02:46.975899566+03:00
+updated: 2017-02-11T01:20:40.505937235+03:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877
@@ -14,7 +14,7 @@ imports:
 - name: github.com/fsnotify/fsnotify
   version: 629574ca2a5df945712d3079857300b5e4da0236
 - name: github.com/hashicorp/hcl
-  version: eb6f65b2d77ed5078887f960ff570fbddbbeb49d
+  version: 372e8ddaa16fd67e371e9323807d056b799360af
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -40,23 +40,23 @@ imports:
   - log
   - random
 - name: github.com/lib/pq
-  version: 67c3f2a8884c9b1aac5503c8d42ae4f73a93511c
+  version: 0477eb88c5ca4009cb281f13c90633375b6a9987
   subpackages:
   - oid
 - name: github.com/magiconair/properties
   version: b3b15ef068fd0b17ddf408a23669f20811d194d2
 - name: github.com/mattn/go-colorable
-  version: d228849504861217f796da67fae4f6e347643f15
+  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
 - name: github.com/mattn/go-isatty
-  version: 30a891c33c7cde7b02a981314b4228ec99380cca
+  version: 281032e84ae07510239465db46bf442aa44b953a
 - name: github.com/mitchellh/mapstructure
-  version: ed105d635dfa9ea7133f7c79f1eb36203fc3a156
+  version: db1efb556f84b25a0a13a04aad883943538ad2e0
 - name: github.com/nguyenthenguyen/docx
   version: 8089d6284d59a36bcbb5658dc9619531811fba6e
 - name: github.com/pelletier/go-buffruneio
   version: df1e16fde7fc330a0ca68167c23bf7ed6ac31d6d
 - name: github.com/pelletier/go-toml
-  version: a1f048ba24490f9b0674a67e1ce995d685cddf4a
+  version: c9506ee96398e7571356462217b9e24d6a628d71
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/spf13/afero
@@ -64,11 +64,11 @@ imports:
   subpackages:
   - mem
 - name: github.com/spf13/cast
-  version: 56a7ecbeb18dde53c6db4bd96b541fd9741b8d44
+  version: d1139bab1c07d5ad390a65e7305876b3c1a8370b
 - name: github.com/spf13/jwalterweatherman
   version: fa7ca7e836cf3a8bb4ebf799f472c12d7e903d66
 - name: github.com/spf13/pflag
-  version: 51268031d79952516489a9f8aa34e9709b98d946
+  version: 9ff6c6923cfffbcd502984b8e0c80539a94968b7
 - name: github.com/spf13/viper
   version: 5ed0fc31f7f453625df314d8e66b9791e8d13003
 - name: github.com/valyala/bytebufferpool
@@ -76,23 +76,23 @@ imports:
 - name: github.com/valyala/fasttemplate
   version: d090d65668a286d9a180d43a19dfdc5dcad8fe88
 - name: golang.org/x/crypto
-  version: b8a2a83acfe6e6770b75de42d5ff4c67596675c0
+  version: 453249f01cfeb54c3d549ddb75ff152ca243f9d8
   subpackages:
   - bcrypt
   - blowfish
 - name: golang.org/x/net
-  version: f2499483f923065a842d38eb4c7f1927e6fc6e6d
+  version: a689eb3bc4b53af70390acc3cf68c9f549b6b8d6
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: d75a52659825e75fff6158388dddc6a5b04f9ba5
+  version: aaabbdc969c3935a2a7f61efac801e7163c73a2a
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 11dbc599981ccdf4fb18802a28392a8bcf7a9395
+  version: 06d6eba81293389cafdff7fca90d75592194b2d9
   subpackages:
   - transform
   - unicode/norm
 - name: gopkg.in/yaml.v2
-  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
+  version: a3f3340b5840cee44f372bddb5880fcbc419b46a
 testImports: []

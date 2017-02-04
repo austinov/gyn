@@ -254,28 +254,28 @@ func (d *dao) GetAppointment(id int64) (store.AppointmentView, error) {
 	return ap, err
 }
 
-func (d *dao) SaveAppointment(apv *store.AppointmentView) error {
+func (d *dao) SaveAppointment(apv store.AppointmentView) (id int64, err error) {
 	tx, err := d.db.Begin()
 	if err != nil {
-		return err
+		return id, err
 	}
 	if err := tx.Stmt(insertPatientStmt).QueryRow(strings.ToLower(apv.PatientName), apv.PatientName).Scan(&apv.PatientId); err != nil {
 		tx.Rollback()
-		return err
+		return id, err
 	}
 	ap := apv.Appointment
 	if ap.Id == 0 {
 		err = insertAppointment(tx, &ap)
 	} else {
-		cnt, _err := updateAppointment(tx, &ap)
+		cnt, nerr := updateAppointment(tx, &ap)
 		if cnt != 1 {
-			return store.ErrDataNotUpdated
+			return ap.Id, store.ErrDataNotUpdated
 		}
-		err = _err
+		err = nerr
 	}
 	if err != nil {
 		tx.Rollback()
-		return err
+		return ap.Id, err
 	}
-	return tx.Commit()
+	return ap.Id, tx.Commit()
 }

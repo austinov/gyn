@@ -42,3 +42,15 @@ Target operating system and architecture parameters have values
 as described in [specification] (https://golang.org/pkg/go/build/).
 In the absence of one of them, the backend will build for current
 operating system and architecture.
+
+For example, to build:
+
+- for Linux x64 `./build.sh linux amd64`
+
+- for Linux x32 `./build.sh linux 386`
+
+- for Windows x64 `./build.sh windows amd64`
+
+- for Windows x32 `./build.sh windows 386`
+
+- for current OS `./build.sh`

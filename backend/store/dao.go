@@ -18,5 +18,5 @@ type Dao interface {
 	GetDictionaries() (map[string][]Dictionary, error)
 	SearchAppointments(patientName string) ([]AppointmentView, error)
 	GetAppointment(id int64) (AppointmentView, error)
-	SaveAppointment(ap *AppointmentView) error
+	SaveAppointment(apv AppointmentView) (id int64, err error)
 }

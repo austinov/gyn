@@ -41,6 +41,7 @@ pushd "$(dirname "$(readlink -f "$BASH_SOURCE[0]")")" > /dev/null && {
       echo "Backend will build for current OS with name \"$BACKEND_BIN\"."
   fi
   glide up
+  go generate ./store
   go build -o ../$BUILD_DIR/$BACKEND_DIR/$BACKEND_BIN
 
   # Copy build folder
