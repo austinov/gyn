@@ -12,6 +12,7 @@ createdb gyn
 # create tables
 
 pushd "$(dirname "$(readlink -f "$BASH_SOURCE[0]")")" > /dev/null && {
-  psql -d gyn -f ./create-tables.sql
+  psql -d gyn --single-transaction -f ./create-tables.sql
+  psql -d gyn --single-transaction -f ./rollout_20170205.sql
   popd > /dev/null
 }

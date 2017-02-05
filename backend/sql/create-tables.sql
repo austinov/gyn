@@ -388,8 +388,8 @@ COMMENT ON COLUMN appointments.updated_at IS 'Дата изменения зап
 COMMENT ON COLUMN appointments.date_receipt IS 'Дата приёма, Unix timestamp in seconds';
 COMMENT ON COLUMN appointments.doctor_id IS 'Дежурный врач акушер-гинеколог';
 COMMENT ON COLUMN appointments.patient_id IS 'Пациент';
-COMMENT ON COLUMN appointments.receipt_kind_id IS 'Тип поступиления пациента'; -- +
-COMMENT ON COLUMN appointments.receipt_diagnosis IS 'Диагноз при поступилении'; -- +
+COMMENT ON COLUMN appointments.receipt_kind_id IS 'Тип поступиления пациента';
+COMMENT ON COLUMN appointments.receipt_diagnosis IS 'Диагноз при поступилении';
 COMMENT ON COLUMN appointments.alergo IS 'Аллергоанамнез';
 COMMENT ON COLUMN appointments.contact_infected IS 'Контакт с инфекционными больными';
 COMMENT ON COLUMN appointments.hiv IS 'Малярия, туберкулез, гепатиты, ВИЧ';
@@ -400,36 +400,36 @@ COMMENT ON COLUMN appointments.drugs IS 'Прием наркотических, 
 COMMENT ON COLUMN appointments.inheritance IS 'Наследственность';
 COMMENT ON COLUMN appointments.gyndiseases IS 'Гинекологические заболевания';
 COMMENT ON COLUMN appointments.paritet IS 'Паритет';
-COMMENT ON COLUMN appointments.paritet_b IS 'Паритет - кол-во беременностей'; -- +
-COMMENT ON COLUMN appointments.paritet_p IS 'Паритет - кол-во родов'; -- +
-COMMENT ON COLUMN appointments.paritet_a IS 'Паритет - кол-во абортов'; -- +
-COMMENT ON COLUMN appointments.paritet_sv IS 'Паритет - кол-во самопроизвольных выкидышей'; -- +
-COMMENT ON COLUMN appointments.paritet_nb IS 'Паритет - кол-во неразвивающихся беременностей'; -- +
-COMMENT ON COLUMN appointments.paritet_eb IS 'Паритет - кол-во эктопических беременностей'; -- +
-COMMENT ON COLUMN appointments.infection_markers_state_id IS 'Течение беременности: обследование на инфекционные маркеры'; -- +
-COMMENT ON COLUMN appointments.infection_markers_desc IS 'Течение беременности: описание обследования на инфекционные маркеры'; -- +
-COMMENT ON COLUMN appointments.tromboflebia_state_id IS 'Течение беременности: обследование на наследственную тромбофлебию'; -- +
-COMMENT ON COLUMN appointments.tromboflebia_desc IS 'Течение беременности: описание обследования на наследственную тромбофлебию'; -- +
+COMMENT ON COLUMN appointments.paritet_b IS 'Паритет - кол-во беременностей';
+COMMENT ON COLUMN appointments.paritet_p IS 'Паритет - кол-во родов';
+COMMENT ON COLUMN appointments.paritet_a IS 'Паритет - кол-во абортов';
+COMMENT ON COLUMN appointments.paritet_sv IS 'Паритет - кол-во самопроизвольных выкидышей';
+COMMENT ON COLUMN appointments.paritet_nb IS 'Паритет - кол-во неразвивающихся беременностей';
+COMMENT ON COLUMN appointments.paritet_eb IS 'Паритет - кол-во эктопических беременностей';
+COMMENT ON COLUMN appointments.infection_markers_state_id IS 'Течение беременности: обследование на инфекционные маркеры';
+COMMENT ON COLUMN appointments.infection_markers_desc IS 'Течение беременности: описание обследования на инфекционные маркеры';
+COMMENT ON COLUMN appointments.tromboflebia_state_id IS 'Течение беременности: обследование на наследственную тромбофлебию';
+COMMENT ON COLUMN appointments.tromboflebia_desc IS 'Течение беременности: описание обследования на наследственную тромбофлебию';
 COMMENT ON COLUMN appointments.first_trimester IS 'I триместр';
 COMMENT ON COLUMN appointments.second_trimester IS 'II триместр';
 COMMENT ON COLUMN appointments.third_trimester IS 'III триместр';
 COMMENT ON COLUMN appointments.history IS 'Из анамнеза';
-COMMENT ON COLUMN appointments.oprv IS 'ОПРВ'; -- +
-COMMENT ON COLUMN appointments.oprv_state_id IS 'ОПРВ (не)равномерно'; -- +
+COMMENT ON COLUMN appointments.oprv IS 'ОПРВ';
+COMMENT ON COLUMN appointments.oprv_state_id IS 'ОПРВ (не)равномерно';
 COMMENT ON COLUMN appointments.exp_by_menstruation IS 'Сроки беременности по менструации';
 COMMENT ON COLUMN appointments.exp_by_first_visit IS 'Сроки беременности по 1 явке';
-COMMENT ON COLUMN appointments.exp_by_ultra_first IS 'Сроки беременности по первому УЗИ'; -- +
-COMMENT ON COLUMN appointments.exp_by_ultra_second IS 'Сроки беременности по второму УЗИ'; -- +
-COMMENT ON COLUMN appointments.exp_by_ultra_third IS 'Сроки беременности по третьему УЗИ'; -- +
+COMMENT ON COLUMN appointments.exp_by_ultra_first IS 'Сроки беременности по первому УЗИ';
+COMMENT ON COLUMN appointments.exp_by_ultra_second IS 'Сроки беременности по второму УЗИ';
+COMMENT ON COLUMN appointments.exp_by_ultra_third IS 'Сроки беременности по третьему УЗИ';
 COMMENT ON COLUMN appointments.health_state_id IS 'Состояние';
 COMMENT ON COLUMN appointments.claims IS 'Жалобы';
 COMMENT ON COLUMN appointments.head IS 'Голова';
 COMMENT ON COLUMN appointments.vision IS 'Зрение';
 COMMENT ON COLUMN appointments.skin_state_id IS 'Кожные покровы';
 COMMENT ON COLUMN appointments.lymph IS 'Лимфоузлы';
-COMMENT ON COLUMN appointments.breath_state_id IS 'Состояние дыхания'; -- +
-COMMENT ON COLUMN appointments.rale_state_id IS 'Типы хрипов'; -- +
-COMMENT ON COLUMN appointments.tones_state_id IS 'Типы тонов cor'; -- +
+COMMENT ON COLUMN appointments.breath_state_id IS 'Состояние дыхания';
+COMMENT ON COLUMN appointments.rale_state_id IS 'Типы хрипов';
+COMMENT ON COLUMN appointments.tones_state_id IS 'Типы тонов cor';
 COMMENT ON COLUMN appointments.pulse IS 'Пульс';
 COMMENT ON COLUMN appointments.pulse_type IS 'Ритмичность пульса';
 COMMENT ON COLUMN appointments.pressure IS 'АД';
@@ -439,12 +439,12 @@ COMMENT ON COLUMN appointments.tongue_dry IS 'Язык сухой';
 COMMENT ON COLUMN appointments.tongue_coated IS 'Язык обложен';
 COMMENT ON COLUMN appointments.tongue_uncoated IS 'Язык не обложен';
 COMMENT ON COLUMN appointments.throat IS 'Осмотр зева';
-COMMENT ON COLUMN appointments.belly_period IS 'Живот соответствует периоду'; -- +
-COMMENT ON COLUMN appointments.belly_state_id IS 'Состояние живота'; -- +
-COMMENT ON COLUMN appointments.epigastrium_state_use IS 'Использовать значение состояния область эпигастрия'; -- +
-COMMENT ON COLUMN appointments.epigastrium_state_id IS 'Состояние область эпигастрия'; -- +
-COMMENT ON COLUMN appointments.scar_state_use IS 'Использовать значение состояния область послеоперационного рубца'; -- +
-COMMENT ON COLUMN appointments.scar_state_id IS 'Состояние области послеоперационного рубца'; -- +
+COMMENT ON COLUMN appointments.belly_period IS 'Живот соответствует периоду';
+COMMENT ON COLUMN appointments.belly_state_id IS 'Состояние живота';
+COMMENT ON COLUMN appointments.epigastrium_state_use IS 'Использовать значение состояния область эпигастрия';
+COMMENT ON COLUMN appointments.epigastrium_state_id IS 'Состояние область эпигастрия';
+COMMENT ON COLUMN appointments.scar_state_use IS 'Использовать значение состояния область послеоперационного рубца';
+COMMENT ON COLUMN appointments.scar_state_id IS 'Состояние области послеоперационного рубца';
 COMMENT ON COLUMN appointments.peritoneal IS 'Перитонеальные симптомы';
 COMMENT ON COLUMN appointments.labors IS 'Родовая деятельность';
 COMMENT ON COLUMN appointments.dysuric IS 'Дизурические явления (нет/есть)';
@@ -455,10 +455,10 @@ COMMENT ON COLUMN appointments.fetal_position_id IS 'Положение плод
 COMMENT ON COLUMN appointments.fetal_previa_id IS 'Предлежит плода';
 COMMENT ON COLUMN appointments.fetal_align_id IS 'Выравнивание плода';
 COMMENT ON COLUMN appointments.fetal_heartbeat_id IS 'Сердцебиение плода';
-COMMENT ON COLUMN appointments.heartbeat_rithm_id IS 'Ритмичность сердцебиения'; -- +
+COMMENT ON COLUMN appointments.heartbeat_rithm_id IS 'Ритмичность сердцебиения';
 COMMENT ON COLUMN appointments.fetal_pulse IS 'Пульс плода';
 COMMENT ON COLUMN appointments.reproductive_discharge_type_id IS 'Тип выделений из половых путей';
-COMMENT ON COLUMN appointments.reproductive_discharge_state_id IS 'Состояние выделений из половых путей'; -- +
+COMMENT ON COLUMN appointments.reproductive_discharge_state_id IS 'Состояние выделений из половых путей';
 COMMENT ON COLUMN appointments.vdm IS 'ВДМ';
 COMMENT ON COLUMN appointments.oj IS 'ОЖ';
 COMMENT ON COLUMN appointments.dspin IS 'D.spin';
@@ -468,19 +468,19 @@ COMMENT ON COLUMN appointments.cext IS 'C.ext';
 COMMENT ON COLUMN appointments.devel_organs_id IS 'Наружние половые органы развиты';
 COMMENT ON COLUMN appointments.genital_anomalies IS 'Аномалии';
 COMMENT ON COLUMN appointments.vagina_state_id IS 'Влагалище';
-COMMENT ON COLUMN appointments.bishop IS 'Оценка по Бишопу'; -- +
-COMMENT ON COLUMN appointments.fetal_bladder_state_id IS 'Состояния плодного пузыря'; -- +
+COMMENT ON COLUMN appointments.bishop IS 'Оценка по Бишопу';
+COMMENT ON COLUMN appointments.fetal_bladder_state_id IS 'Состояния плодного пузыря';
 COMMENT ON COLUMN appointments.fetal_bladder_previa_id IS 'Плодный пузырь предлежит';
 COMMENT ON COLUMN appointments.fetal_bladder_align_id IS 'Плодный пузырь прижат';
 COMMENT ON COLUMN appointments.arches IS 'Своды';
 COMMENT ON COLUMN appointments.conjugate IS 'Диагональная коньюгата';
 COMMENT ON COLUMN appointments.pelvis_state_id IS 'Костный таз';
 COMMENT ON COLUMN appointments.pelvis_exostosis IS 'Экзостозы';
-COMMENT ON COLUMN appointments.pelvis_discharge_type_id IS 'Тип выделений (костный таз)';  -- +
-COMMENT ON COLUMN appointments.pelvis_discharge_state_id IS 'Состояние выделений (костный таз)'; -- +
+COMMENT ON COLUMN appointments.pelvis_discharge_type_id IS 'Тип выделений (костный таз)'; 
+COMMENT ON COLUMN appointments.pelvis_discharge_state_id IS 'Состояние выделений (костный таз)';
 COMMENT ON COLUMN appointments.diagnosis IS 'Диагноз';
 COMMENT ON COLUMN appointments.conclusion IS 'Заключение';
-COMMENT ON COLUMN appointments.birth_plan_use IS 'Использование плана родов'; -- +
+COMMENT ON COLUMN appointments.birth_plan_use IS 'Использование плана родов';
 COMMENT ON COLUMN appointments.birth_plan IS 'План родов';
 
 CREATE INDEX ind_appointments_id ON appointments USING btree (id);
