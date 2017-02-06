@@ -9,8 +9,7 @@ COMMENT ON TABLE oprv_states IS 'Состояние наружнего зева'
 CREATE INDEX ind_external_throat_states_id ON external_throat_states USING btree (id);
 CREATE UNIQUE INDEX uni_external_throat_states ON external_throat_states (lower(name));
 
-INSERT INTO external_throat_states (name) VALUES ('закрыт'), ('пропускает кончик пальца');
-
+INSERT INTO external_throat_states (name) VALUES ('закрыт (0 баллов)'), ('пропускает кончик пальца');
 
 ALTER TABLE appointments ADD COLUMN ultra_in_reception boolean;
 COMMENT ON COLUMN appointments.ultra_in_reception IS 'УЗИ в приемном отделении';
@@ -18,7 +17,6 @@ COMMENT ON COLUMN appointments.ultra_in_reception IS 'УЗИ в приемном
 ALTER TABLE appointments ADD COLUMN doppler_in_reception boolean;
 COMMENT ON COLUMN appointments.doppler_in_reception IS 'Допплерометрия в приемном отделении';
 
---
 ALTER TABLE appointments ADD COLUMN cervix_back boolean;
 COMMENT ON COLUMN appointments.cervix_back IS 'Шейка матки отклонена кзади (0 баллов)';
 
@@ -37,11 +35,14 @@ COMMENT ON COLUMN appointments.cervix_middle_soft IS 'Шейка матки ум
 ALTER TABLE appointments ADD COLUMN cervix_soft boolean;
 COMMENT ON COLUMN appointments.cervix_soft IS 'Шейка матки мягкая (2 балла)';
 
-ALTER TABLE appointments ADD COLUMN cervix_length boolean;
+ALTER TABLE appointments ADD COLUMN cervix_length varchar(100);
 COMMENT ON COLUMN appointments.cervix_length IS 'Шейка матки длиной (см)';
 
-ALTER TABLE appointments ADD COLUMN cervix_channel boolean;
+ALTER TABLE appointments ADD COLUMN cervix_channel varchar(100);
 COMMENT ON COLUMN appointments.cervix_channel IS 'Цервикальный канал проходим';
+
+ALTER TABLE appointments ADD COLUMN use_external_throat boolean;
+COMMENT ON COLUMN appointments.use_external_throat IS 'Использовать состояние наружнего зева';
 
 ALTER TABLE appointments ADD COLUMN external_throat_state_id integer;
 COMMENT ON COLUMN appointments.external_throat_state_id IS 'Состояние наружнего зева';

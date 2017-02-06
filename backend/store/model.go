@@ -49,6 +49,8 @@ type Appointment struct {
 	History                      string `json:"history" docx:"history" genorm:"history"`
 	Oprv                         string `json:"oprv" genorm:"oprv"`
 	OprvStateId                  int32  `json:"oprvStateId" genorm:"oprv_state_id"`
+	UltraInReception             bool   `json:"ultraInReception" genorm:"ultra_in_reception"`
+	DopplerInReception           bool   `json:"dopplerInReception" genorm:"doppler_in_reception"`
 	ExpByMenstruation            string `json:"expByMenstruation" docx:"expByMenstruation" genorm:"exp_by_menstruation"`
 	ExpByFirstVisit              string `json:"expByFirstVisit" docx:"expByFirstVisit" genorm:"exp_by_first_visit"`
 	ExpByUltraFirst              string `json:"expByUltraFirst" genorm:"exp_by_ultra_first"`
@@ -101,7 +103,17 @@ type Appointment struct {
 	DevelOrgansId                int32  `json:"develOrgansId" genorm:"devel_organs_id"`
 	GenitalAnomalies             string `json:"genitalAnomalies" docx:"genitalAnomalies" genorm:"genital_anomalies"`
 	VaginaStateId                int32  `json:"vaginaStateId" genorm:"vagina_state_id"`
-	Bishop                       string `json:"bishop" docx:"bishop" genorm:"bishop"`
+	Bishop                       string `json:"bishop" genorm:"bishop"`
+	CervixBack                   bool   `json:"cervixBack" genorm:"cervix_back"`
+	CervixFront                  bool   `json:"cervixFront" genorm:"cervix_front"`
+	CervixCenter                 bool   `json:"cervixCenter" genorm:"cervix_center"`
+	CervixTight                  bool   `json:"cervixTight" genorm:"cervix_tight"`
+	CervixMiddleSoft             bool   `json:"cervixMiddleSoft" genorm:"cervix_middle_soft"`
+	CervixSoft                   bool   `json:"cervixSoft" genorm:"cervix_soft"`
+	CervixLength                 string `json:"cervixLength" genorm:"cervix_length"`
+	CervixChannel                string `json:"cervixChannel" genorm:"cervix_channel"`
+	UseExternalThroat            bool   `json:"useExternalThroat" genorm:"use_external_throat"`
+	ExternalThroatStateId        int32  `json:"externalThroatStateId" genorm:"external_throat_state_id"`
 	FetalBladderStateId          int32  `json:"fetalBladderStateId" genorm:"fetal_bladder_state_id"`
 	FetalBladderPreviaId         int32  `json:"fetalBladderPreviaId" genorm:"fetal_bladder_previa_id"`
 	FetalBladderAlignId          int32  `json:"fetalBladderAlignId" genorm:"fetal_bladder_align_id"`
@@ -144,10 +156,11 @@ type AppointmentView struct {
 	ReproductiveDischargeStateName string `json:"-" docx:"reproductiveDischargeStateName" genorm:"reproductive_discharge_state_name"`
 	DevelOrgansName                string `json:"-" docx:"develOrgansName" genorm:"devel_organs_name"`
 	VaginaStateName                string `json:"-" docx:"vaginaStateName" genorm:"vagina_state_name"`
-	FetalBladderStateName          string `json:"-" docx:"fetalBladderStateName" genorm:"fetal_bladder_state_name"`
+	FetalBladderStateName          string `json:"-" genorm:"fetal_bladder_state_name"`
 	FetalBladderPreviaName         string `json:"-" docx:"fetalBladderPreviaName" genorm:"fetal_bladder_previa_name"`
 	FetalBladderAlignName          string `json:"-" docx:"fetalBladderAlignName" genorm:"fetal_bladder_align_name"`
 	PelvisStateName                string `json:"-" docx:"pelvisStateName" genorm:"pelvis_state_name"`
 	PelvisDischargeTypeName        string `json:"-" docx:"pelvisDischargeTypeName" genorm:"pelvis_discharge_type_name"`
 	PelvisDischargeStateName       string `json:"-" docx:"pelvisDischargeStateName" genorm:"pelvis_discharge_state_name"`
+	ExternalThroatStateName        string `json:"-" docx:"externalThroatStateName" genorm:"external_throat_state_name"`
 }

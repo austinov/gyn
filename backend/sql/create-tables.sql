@@ -366,7 +366,7 @@ CREATE TABLE IF NOT EXISTS appointments (
     "devel_organs_id"           integer,
     "genital_anomalies"         varchar(500),
     "vagina_state_id"           integer,
-    "bishop"                    text,
+    "bishop"                    varchar(50),
     "fetal_bladder_state_id"    integer,
     "fetal_bladder_previa_id"   integer,
     "fetal_bladder_align_id"    integer,

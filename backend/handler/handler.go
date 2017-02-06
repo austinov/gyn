@@ -232,9 +232,11 @@ func fillDocxCallback(appointment interface{}, doc *docx.Docx) error {
 	pregnancy = addTextWithComma(ap.TromboflebiaDesc != "", pregnancy, ap.TromboflebiaDesc, " ")
 	doc.Replace("pregnancy", pregnancy, -1)
 
-	oprv := ""
-	if ap.Oprv != "" {
-		oprv = "ОПВ " + ap.Oprv + ", " + ap.OprvStateName + "\n"
+	oprv := addTextWithComma(ap.Oprv != "", "", "ОПВ "+ap.Oprv+", "+ap.OprvStateName, "")
+	oprv = addTextWithComma(ap.UltraInReception, oprv, "УЗИ в приемном отделении", ", ")
+	oprv = addTextWithComma(ap.DopplerInReception, oprv, "Допплерометрия в приемном отделении", ", ")
+	if oprv != "" {
+		oprv += "\n"
 	}
 	doc.Replace("oprv", oprv, -1)
 
@@ -265,6 +267,20 @@ func fillDocxCallback(appointment interface{}, doc *docx.Docx) error {
 		bowel = "регулярный"
 	}
 	doc.Replace("bowel", bowel, -1)
+
+	bishop := addTextWithComma(ap.CervixBack, "", "отклонена кзади (0 баллов)", "")
+	bishop = addTextWithComma(ap.CervixFront, bishop, "кпереди (1 балл)", ", ")
+	bishop = addTextWithComma(ap.CervixCenter, bishop, "центрирована (2 балла)", ", ")
+	bishop = addTextWithComma(ap.CervixTight, bishop, "плотная (0 баллов)", ", ")
+	bishop = addTextWithComma(ap.CervixMiddleSoft, bishop, "умеренно размягчена (1 балл)", ", ")
+	bishop = addTextWithComma(ap.CervixSoft, bishop, "мягкая (2 балла)", ", ")
+	bishop = addTextWithComma(ap.CervixLength != "", bishop, "длиной "+ap.CervixLength+" см (>2 см 0 баллов, 1-2 см 1 балл, < 1 см 2 балла)", ", ")
+	bishop = addTextWithComma(ap.UseExternalThroat, bishop, "Наружный зев "+ap.ExternalThroatStateName, "\n")
+	bishop = addTextWithComma(!ap.UseExternalThroat, bishop, "Цервикальный канал проходим для "+ap.CervixChannel+" (1п.п. до внутреннего зева 1 балл, 1п.п. свободно и > 2 балла)", "\n")
+	bishop = addTextWithComma(!ap.UseExternalThroat, bishop, "Плодный пузырь "+ap.FetalBladderStateName, "\n")
+	bishop = "Шейка матки (оценка по Бишопу " + ap.Bishop + " сумма баллов):" + bishop
+
+	doc.Replace("bishop", bishop, -1)
 
 	birthPlanName, birthPlanValue := "", ""
 	if ap.BirthPlanUse {

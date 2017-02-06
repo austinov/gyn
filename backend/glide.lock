@@ -1,5 +1,5 @@
 hash: afef2ee40750d14e34fe9d4fa0ff542b7d389ed5fd9bf44fa17bc89f8d4b83ed
-updated: 2017-02-11T01:20:40.505937235+03:00
+updated: 2017-02-11T11:28:56.114030066+03:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877
@@ -81,7 +81,7 @@ imports:
   - bcrypt
   - blowfish
 - name: golang.org/x/net
-  version: a689eb3bc4b53af70390acc3cf68c9f549b6b8d6
+  version: 61557ac0112b576429a0df080e1c2cef5dfbb642
   subpackages:
   - context
 - name: golang.org/x/sys

@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	selectAppointmentByIdSql     = "SELECT id, created_at, updated_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo, contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases, paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb, infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc, first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id, exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second, exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph, breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type, pressure, tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling, uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id, heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id, vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id, bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan FROM appointments WHERE id = $1"
-	insertAppointmentSql         = "INSERT INTO appointments ( created_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo, contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases, paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb, infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc, first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id, exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second, exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph, breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type, pressure, tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling, uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id, heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id, vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id, bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83, $84, $85, $86, $87, $88, $89, $90, $91, $92, $93, $94, $95, $96, $97, $98 ) RETURNING id"
-	updateAppointmentSql         = "WITH rows AS (UPDATE appointments SET updated_at = $1, date_receipt = $2, doctor_id = $3, patient_id = $4, receipt_kind_id = $5, receipt_diagnosis = $6, alergo = $7, contact_infected = $8, hiv = $9, transfusion = $10, dyscountry = $11, smoking = $12, drugs = $13, inheritance = $14, gyndiseases = $15, paritet = $16, paritet_b = $17, paritet_p = $18, paritet_a = $19, paritet_sv = $20, paritet_nb = $21, paritet_eb = $22, infection_markers_state_id = $23, infection_markers_desc = $24, tromboflebia_state_id = $25, tromboflebia_desc = $26, first_trimester = $27, second_trimester = $28, third_trimester = $29, history = $30, oprv = $31, oprv_state_id = $32, exp_by_menstruation = $33, exp_by_first_visit = $34, exp_by_ultra_first = $35, exp_by_ultra_second = $36, exp_by_ultra_third = $37, health_state_id = $38, claims = $39, head = $40, vision = $41, skin_state_id = $42, lymph = $43, breath_state_id = $44, rale_state_id = $45, tones_state_id = $46, pulse = $47, pulse_type = $48, pressure = $49, tongue_clean = $50, tongue_wet = $51, tongue_dry = $52, tongue_coated = $53, tongue_uncoated = $54, throat = $55, belly_period = $56, belly_state_id = $57, epigastrium_state_use = $58, epigastrium_state_id = $59, scar_state_use = $60, scar_state_id = $61, peritoneal = $62, labors = $63, dysuric = $64, bowel = $65, limb_swelling = $66, uteruse_state_id = $67, fetal_position_id = $68, fetal_previa_id = $69, fetal_align_id = $70, fetal_heartbeat_id = $71, heartbeat_rithm_id = $72, fetal_pulse = $73, reproductive_discharge_type_id = $74, reproductive_discharge_state_id = $75, vdm = $76, oj = $77, dspin = $78, dcrist = $79, dtroch = $80, cext = $81, devel_organs_id = $82, genital_anomalies = $83, vagina_state_id = $84, bishop = $85, fetal_bladder_state_id = $86, fetal_bladder_previa_id = $87, fetal_bladder_align_id = $88, arches = $89, conjugate = $90, pelvis_state_id = $91, pelvis_exostosis = $92, pelvis_discharge_type_id = $93, pelvis_discharge_state_id = $94, diagnosis = $95, conclusion = $96, birth_plan_use = $97, birth_plan = $98 WHERE id = $99 RETURNING 1) SELECT count(*) FROM rows"
-	selectAppointmentViewByIdSql = "SELECT id, created_at, updated_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo, contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases, paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb, infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc, first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id, exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second, exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph, breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type, pressure, tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling, uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id, heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id, vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id, bishop, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan, doctor_name, patient_name, receipt_kind_name, infection_markers_state_name, tromboflebia_state_name, oprv_state_name, health_state_name, skin_state_name, breath_state_name, rale_state_name, tones_state_name, belly_state_name, epigastrium_state_name, scar_state_name, uteruse_state_name, fetal_position_name, fetal_previa_name, fetal_align_name, fetal_heartbeat_name, heartbeat_rithm_name, reproductive_discharge_type_name, reproductive_discharge_state_name, devel_organs_name, vagina_state_name, fetal_bladder_state_name, fetal_bladder_previa_name, fetal_bladder_align_name, pelvis_state_name, pelvis_discharge_type_name, pelvis_discharge_state_name FROM vw_appointments WHERE id = $1"
+	selectAppointmentByIdSql     = "SELECT id, created_at, updated_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo, contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases, paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb, infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc, first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id, ultra_in_reception, doppler_in_reception, exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second, exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph, breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type, pressure, tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling, uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id, heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id, vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id, bishop, cervix_back, cervix_front, cervix_center, cervix_tight, cervix_middle_soft, cervix_soft, cervix_length, cervix_channel, use_external_throat, external_throat_state_id, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan FROM appointments WHERE id = $1"
+	insertAppointmentSql         = "INSERT INTO appointments ( created_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo, contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases, paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb, infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc, first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id, ultra_in_reception, doppler_in_reception, exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second, exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph, breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type, pressure, tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling, uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id, heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id, vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id, bishop, cervix_back, cervix_front, cervix_center, cervix_tight, cervix_middle_soft, cervix_soft, cervix_length, cervix_channel, use_external_throat, external_throat_state_id, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan ) VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53, $54, $55, $56, $57, $58, $59, $60, $61, $62, $63, $64, $65, $66, $67, $68, $69, $70, $71, $72, $73, $74, $75, $76, $77, $78, $79, $80, $81, $82, $83, $84, $85, $86, $87, $88, $89, $90, $91, $92, $93, $94, $95, $96, $97, $98, $99, $100, $101, $102, $103, $104, $105, $106, $107, $108, $109, $110 ) RETURNING id"
+	updateAppointmentSql         = "WITH rows AS (UPDATE appointments SET updated_at = $1, date_receipt = $2, doctor_id = $3, patient_id = $4, receipt_kind_id = $5, receipt_diagnosis = $6, alergo = $7, contact_infected = $8, hiv = $9, transfusion = $10, dyscountry = $11, smoking = $12, drugs = $13, inheritance = $14, gyndiseases = $15, paritet = $16, paritet_b = $17, paritet_p = $18, paritet_a = $19, paritet_sv = $20, paritet_nb = $21, paritet_eb = $22, infection_markers_state_id = $23, infection_markers_desc = $24, tromboflebia_state_id = $25, tromboflebia_desc = $26, first_trimester = $27, second_trimester = $28, third_trimester = $29, history = $30, oprv = $31, oprv_state_id = $32, ultra_in_reception = $33, doppler_in_reception = $34, exp_by_menstruation = $35, exp_by_first_visit = $36, exp_by_ultra_first = $37, exp_by_ultra_second = $38, exp_by_ultra_third = $39, health_state_id = $40, claims = $41, head = $42, vision = $43, skin_state_id = $44, lymph = $45, breath_state_id = $46, rale_state_id = $47, tones_state_id = $48, pulse = $49, pulse_type = $50, pressure = $51, tongue_clean = $52, tongue_wet = $53, tongue_dry = $54, tongue_coated = $55, tongue_uncoated = $56, throat = $57, belly_period = $58, belly_state_id = $59, epigastrium_state_use = $60, epigastrium_state_id = $61, scar_state_use = $62, scar_state_id = $63, peritoneal = $64, labors = $65, dysuric = $66, bowel = $67, limb_swelling = $68, uteruse_state_id = $69, fetal_position_id = $70, fetal_previa_id = $71, fetal_align_id = $72, fetal_heartbeat_id = $73, heartbeat_rithm_id = $74, fetal_pulse = $75, reproductive_discharge_type_id = $76, reproductive_discharge_state_id = $77, vdm = $78, oj = $79, dspin = $80, dcrist = $81, dtroch = $82, cext = $83, devel_organs_id = $84, genital_anomalies = $85, vagina_state_id = $86, bishop = $87, cervix_back = $88, cervix_front = $89, cervix_center = $90, cervix_tight = $91, cervix_middle_soft = $92, cervix_soft = $93, cervix_length = $94, cervix_channel = $95, use_external_throat = $96, external_throat_state_id = $97, fetal_bladder_state_id = $98, fetal_bladder_previa_id = $99, fetal_bladder_align_id = $100, arches = $101, conjugate = $102, pelvis_state_id = $103, pelvis_exostosis = $104, pelvis_discharge_type_id = $105, pelvis_discharge_state_id = $106, diagnosis = $107, conclusion = $108, birth_plan_use = $109, birth_plan = $110 WHERE id = $111 RETURNING 1) SELECT count(*) FROM rows"
+	selectAppointmentViewByIdSql = "SELECT id, created_at, updated_at, date_receipt, doctor_id, patient_id, receipt_kind_id, receipt_diagnosis, alergo, contact_infected, hiv, transfusion, dyscountry, smoking, drugs, inheritance, gyndiseases, paritet, paritet_b, paritet_p, paritet_a, paritet_sv, paritet_nb, paritet_eb, infection_markers_state_id, infection_markers_desc, tromboflebia_state_id, tromboflebia_desc, first_trimester, second_trimester, third_trimester, history, oprv, oprv_state_id, ultra_in_reception, doppler_in_reception, exp_by_menstruation, exp_by_first_visit, exp_by_ultra_first, exp_by_ultra_second, exp_by_ultra_third, health_state_id, claims, head, vision, skin_state_id, lymph, breath_state_id, rale_state_id, tones_state_id, pulse, pulse_type, pressure, tongue_clean, tongue_wet, tongue_dry, tongue_coated, tongue_uncoated, throat, belly_period, belly_state_id, epigastrium_state_use, epigastrium_state_id, scar_state_use, scar_state_id, peritoneal, labors, dysuric, bowel, limb_swelling, uteruse_state_id, fetal_position_id, fetal_previa_id, fetal_align_id, fetal_heartbeat_id, heartbeat_rithm_id, fetal_pulse, reproductive_discharge_type_id, reproductive_discharge_state_id, vdm, oj, dspin, dcrist, dtroch, cext, devel_organs_id, genital_anomalies, vagina_state_id, bishop, cervix_back, cervix_front, cervix_center, cervix_tight, cervix_middle_soft, cervix_soft, cervix_length, cervix_channel, use_external_throat, external_throat_state_id, fetal_bladder_state_id, fetal_bladder_previa_id, fetal_bladder_align_id, arches, conjugate, pelvis_state_id, pelvis_exostosis, pelvis_discharge_type_id, pelvis_discharge_state_id, diagnosis, conclusion, birth_plan_use, birth_plan, doctor_name, patient_name, receipt_kind_name, infection_markers_state_name, tromboflebia_state_name, oprv_state_name, health_state_name, skin_state_name, breath_state_name, rale_state_name, tones_state_name, belly_state_name, epigastrium_state_name, scar_state_name, uteruse_state_name, fetal_position_name, fetal_previa_name, fetal_align_name, fetal_heartbeat_name, heartbeat_rithm_name, reproductive_discharge_type_name, reproductive_discharge_state_name, devel_organs_name, vagina_state_name, fetal_bladder_state_name, fetal_bladder_previa_name, fetal_bladder_align_name, pelvis_state_name, pelvis_discharge_type_name, pelvis_discharge_state_name, external_throat_state_name FROM vw_appointments WHERE id = $1"
 )
 
 var (
@@ -62,6 +62,8 @@ func getAppointmentById(id int64) (store.Appointment, error) {
 		&t.History,
 		&t.Oprv,
 		&t.OprvStateId,
+		&t.UltraInReception,
+		&t.DopplerInReception,
 		&t.ExpByMenstruation,
 		&t.ExpByFirstVisit,
 		&t.ExpByUltraFirst,
@@ -115,6 +117,16 @@ func getAppointmentById(id int64) (store.Appointment, error) {
 		&t.GenitalAnomalies,
 		&t.VaginaStateId,
 		&t.Bishop,
+		&t.CervixBack,
+		&t.CervixFront,
+		&t.CervixCenter,
+		&t.CervixTight,
+		&t.CervixMiddleSoft,
+		&t.CervixSoft,
+		&t.CervixLength,
+		&t.CervixChannel,
+		&t.UseExternalThroat,
+		&t.ExternalThroatStateId,
 		&t.FetalBladderStateId,
 		&t.FetalBladderPreviaId,
 		&t.FetalBladderAlignId,
@@ -175,6 +187,8 @@ func insertAppointment(tx *sql.Tx, t *store.Appointment) error {
 		t.History,
 		t.Oprv,
 		t.OprvStateId,
+		t.UltraInReception,
+		t.DopplerInReception,
 		t.ExpByMenstruation,
 		t.ExpByFirstVisit,
 		t.ExpByUltraFirst,
@@ -228,6 +242,16 @@ func insertAppointment(tx *sql.Tx, t *store.Appointment) error {
 		t.GenitalAnomalies,
 		t.VaginaStateId,
 		t.Bishop,
+		t.CervixBack,
+		t.CervixFront,
+		t.CervixCenter,
+		t.CervixTight,
+		t.CervixMiddleSoft,
+		t.CervixSoft,
+		t.CervixLength,
+		t.CervixChannel,
+		t.UseExternalThroat,
+		t.ExternalThroatStateId,
 		t.FetalBladderStateId,
 		t.FetalBladderPreviaId,
 		t.FetalBladderAlignId,
@@ -278,6 +302,8 @@ func updateAppointment(tx *sql.Tx, t *store.Appointment) (int, error) {
 		t.History,
 		t.Oprv,
 		t.OprvStateId,
+		t.UltraInReception,
+		t.DopplerInReception,
 		t.ExpByMenstruation,
 		t.ExpByFirstVisit,
 		t.ExpByUltraFirst,
@@ -331,6 +357,16 @@ func updateAppointment(tx *sql.Tx, t *store.Appointment) (int, error) {
 		t.GenitalAnomalies,
 		t.VaginaStateId,
 		t.Bishop,
+		t.CervixBack,
+		t.CervixFront,
+		t.CervixCenter,
+		t.CervixTight,
+		t.CervixMiddleSoft,
+		t.CervixSoft,
+		t.CervixLength,
+		t.CervixChannel,
+		t.UseExternalThroat,
+		t.ExternalThroatStateId,
 		t.FetalBladderStateId,
 		t.FetalBladderPreviaId,
 		t.FetalBladderAlignId,
@@ -392,6 +428,8 @@ func getAppointmentViewById(id int64) (store.AppointmentView, error) {
 		&t.History,
 		&t.Oprv,
 		&t.OprvStateId,
+		&t.UltraInReception,
+		&t.DopplerInReception,
 		&t.ExpByMenstruation,
 		&t.ExpByFirstVisit,
 		&t.ExpByUltraFirst,
@@ -445,6 +483,16 @@ func getAppointmentViewById(id int64) (store.AppointmentView, error) {
 		&t.GenitalAnomalies,
 		&t.VaginaStateId,
 		&t.Bishop,
+		&t.CervixBack,
+		&t.CervixFront,
+		&t.CervixCenter,
+		&t.CervixTight,
+		&t.CervixMiddleSoft,
+		&t.CervixSoft,
+		&t.CervixLength,
+		&t.CervixChannel,
+		&t.UseExternalThroat,
+		&t.ExternalThroatStateId,
 		&t.FetalBladderStateId,
 		&t.FetalBladderPreviaId,
 		&t.FetalBladderAlignId,
@@ -487,7 +535,8 @@ func getAppointmentViewById(id int64) (store.AppointmentView, error) {
 		&t.FetalBladderAlignName,
 		&t.PelvisStateName,
 		&t.PelvisDischargeTypeName,
-		&t.PelvisDischargeStateName)
+		&t.PelvisDischargeStateName,
+		&t.ExternalThroatStateName)
 	if err != nil {
 		return t, err
 	}

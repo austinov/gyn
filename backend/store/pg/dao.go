@@ -65,6 +65,8 @@ const (
 		SELECT id, name, 'examination_states' AS dict, orderby FROM examination_states 
         UNION ALL
 		SELECT id, name, 'oprv_states' AS dict, orderby FROM oprv_states
+        UNION ALL
+		SELECT id, name, 'external_throat_states' AS dict, orderby FROM external_throat_states
       ) t
       ORDER BY t.dict,  t.orderby, t.id`
 
