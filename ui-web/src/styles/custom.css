@@ -39,6 +39,12 @@ button, input {
 .label-plus {
     margin-top: 24px;
 }
+.label-plus-12 {
+    margin-top: 12px;
+}
+.label-plus-16 {
+    margin-top: 16px;
+}
 .zero-margin {
     margin: 0 0 0 0;
 }

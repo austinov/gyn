@@ -192,6 +192,12 @@ import date from '../utils/date';
             <option each="{ k in dictionaries.oprv_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.oprvStateId) }">{ k.name }</option>
           </select>
         </div>
+        <div class="col-md-8 label-plus">
+          <div>
+            <label class="checkbox-inline"><input type="checkbox" name="ultraInReception" value="{ appointment.ultraInReception }" checked="{ appointment.ultraInReception }">УЗИ в приемном отделении</label>
+            <label class="checkbox-inline"><input type="checkbox" name="dopplerInReception" value="{ appointment.dopplerInReception }" checked="{ appointment.dopplerInReception }">Допплерометрия в приемном отделении</label>
+          </div>
+        </div>
       </div>
       <div class="row">
         <p class="text-center"><strong>Сроки беременности</strong></p>
@@ -474,14 +480,46 @@ import date from '../utils/date';
         </div>
       </div>
       <div class="row">
+        <div class="col-md-4">
+          <label class="control-label">Шейка матки (оценка по Бишоп, сумма баллов)</label>
+          <input  class="form-control" name="bishop" placeholder="число" value="{ appointment.bishop }">
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-12">
-          <textarea class="form-control" rows="4" name="bishop" placeholder="произвольный текст" value="{ appointment.bishop }"></textarea>
+          <div>
+            <label class="checkbox-inline"><input type="checkbox" name="cervixBack" value="{ appointment.cervixBack }" checked="{ appointment.cervixBack }">отклонена несколько кзади (0 баллов)</label>
+            <label class="checkbox-inline"><input type="checkbox" name="cervixFront" value="{ appointment.cervixFront }" checked="{ appointment.cervixFront }">кпереди (1 балл)</label>
+            <label class="checkbox-inline"><input type="checkbox" name="cervixCenter" value="{ appointment.cervixCenter }" checked="{ appointment.cervixCenter }">центрирована (2 балла)</label>
+            <label class="checkbox-inline"><input type="checkbox" name="cervixTight" value="{ appointment.cervixTight }" checked="{ appointment.cervixTight }">плотная (0 баллов)</label>
+            <label class="checkbox-inline"><input type="checkbox" name="cervixMiddleSoft" value="{ appointment.cervixMiddleSoft }" checked="{ appointment.cervixMiddleSoft }">умеренно размягчена (1 балл)</label>
+            <label class="checkbox-inline"><input type="checkbox" name="cervixSoft" value="{ appointment.cervixSoft }" checked="{ appointment.cervixSoft }">мягкая (2 балла)</label>
+          </div>
+        </div>
+      </div>
+      <br/>
+      <div class="row">
+        <div class="col-md-4 label-plus-12">
+          <label class="control-label">Длиной, см (&gt;2см 0 баллов, 1-2 см 1 балл, &lt;1см 2 балла)</label>
+          <input type="text" class="form-control" name="cervixLength" placeholder="произвольный текст" value="{ appointment.cervixLength }">
+        </div>
+        <div class="col-md-3 label-plus-16">
+          <label class="checkbox-inline">
+            <input type="checkbox" name="useExternalThroat" value="{ appointment.useExternalThroat }" checked="{ appointment.useExternalThroat }" onclick="{ externalThroatCheck }">Наружний зев
+          </label>
+          <select name="externalThroatStateId" class="form-control" disabled="{ disableExternalThroat() }">
+            <option each="{ k in dictionaries.external_throat_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.externalThroatStateId) }">{ k.name }</option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <label class="control-label">Цервикальный канал проходим для (1п.п. до внутреннего зева 1 балл, 1п.п.свободно и &gt; 2 балла)</label>
+          <input type="text" class="form-control" name="cervixChannel" placeholder="произвольный текст" value="{ appointment.cervixChannel }" disabled="{ !disableExternalThroat() }">
         </div>
       </div>
       <div class="row">
         <div class="col-md-3">
           <label class="control-label">Плодный пузырь</label>
-          <select name="fetalBladderStateId" class="form-control">
+          <select name="fetalBladderStateId" class="form-control" disabled="{ !disableExternalThroat() }">
             <option each="{ k in dictionaries.fetal_bladder_states }" value="{ k.id }" selected="{ optionSelected(k.id, appointment.fetalBladderStateId) }">{ k.name }</option>
           </select>
         </div>
@@ -590,6 +628,7 @@ import date from '../utils/date';
           }
       }
       self.passivate = () => {
+          clearControls();
           self.appointment = {};
           self.error = null;
           self.update();
@@ -608,6 +647,12 @@ import date from '../utils/date';
       }
       self.disableScarState = () => {
           return !self.scarStateUse.checked;
+      }
+      self.externalThroatCheck = () => {
+          self.update();
+      }
+      self.disableExternalThroat = () => {
+          return !self.useExternalThroat.checked;
       }
       self.birthPlanCheck = () => {
           self.update();
@@ -667,6 +712,8 @@ import date from '../utils/date';
               history: self.history.value,
               oprv: self.oprv.value,
               oprvStateId: parseInt(self.oprvStateId.value),
+              ultraInReception: self.ultraInReception.checked,
+              dopplerInReception: self.dopplerInReception.checked,
               expByMenstruation: self.expByMenstruation.value,
               expByFirstVisit: self.expByFirstVisit.value,
               expByUltraFirst: self.expByUltraFirst.value,
@@ -720,6 +767,16 @@ import date from '../utils/date';
               genitalAnomalies: self.genitalAnomalies.value,
               vaginaStateId: parseInt(self.vaginaStateId.value),
               bishop: self.bishop.value,
+              cervixBack: self.cervixBack.checked,
+              cervixFront: self.cervixFront.checked,
+              cervixCenter: self.cervixCenter.checked,
+              cervixTight: self.cervixTight.checked,
+              cervixMiddleSoft: self.cervixMiddleSoft.checked,
+              cervixSoft: self.cervixSoft.checked,
+              cervixLength: self.cervixLength.value,
+              useExternalThroat: self.useExternalThroat.checked,
+              externalThroatStateId: parseInt(self.externalThroatStateId.value),
+              cervixChannel: self.cervixChannel.value,
               fetalBladderStateId: parseInt(self.fetalBladderStateId.value),
               fetalBladderPreviaId: parseInt(self.fetalBladderPreviaId.value),
               fetalBladderAlignId: parseInt(self.fetalBladderAlignId.value),
@@ -757,5 +814,83 @@ import date from '../utils/date';
       self.cancel = () => {
           window.location = '/';
       }
+      let clearControls = () => {
+          self.patientName.value = '';
+          self.receiptDiagnosis.value = '';
+          self.alergo.value = '';
+          self.contactInfected.value = '';
+          self.hiv.value = '';
+          self.transfusion.value = '';
+          self.dyscountry.value = '';
+          self.smoking.value = '';
+          self.drugs.value = '';
+          self.inheritance.value = '';
+          self.gyndiseases.value = '';
+          self.paritet.value = '';
+          self.paritetB.value = '';
+          self.paritetP.value = '';
+          self.paritetA.value = '';
+          self.paritetSV.value = '';
+          self.paritetNB.value = '';
+          self.paritetEB.value = '';
+          self.infectionMarkersDesc.value = '';
+          self.tromboflebiaDesc.value = '';
+          self.firstTrimester.value = '';
+          self.secondTrimester.value = '';
+          self.thirdTrimester.value = '';
+          self.history.value = '';
+          self.oprv.value = '';
+          self.ultraInReception.checked = false;
+          self.dopplerInReception.checked = false;
+          self.expByMenstruation.value = '';
+          self.expByFirstVisit.value = '';
+          self.expByUltraFirst.value = '';
+          self.expByUltraSecond.value = '';
+          self.expByUltraThird.value = '';
+          self.claims.value = '';
+          self.head.value = '';
+          self.vision.value = '';
+          self.lymph.value = '';
+          self.pulse.value = '';
+          self.pulseType.value = '';
+          self.pressure.value = '';
+          self.tongueClean.checked = false;
+          self.tongueWet.checked = false;
+          self.tongueDry.checked = false;
+          self.tongueCoated.checked = false;
+          self.tongueUncoated.checked = false;
+          self.throat.value = '';
+          self.bellyPeriod.value = '';
+          self.epigastriumStateUse.checked = false;
+          self.scarStateUse.checked = false;
+          self.peritoneal.value = '';
+          self.labors.value = '';
+          self.limbSwelling.value = '';
+          self.fetalPulse.value = '';
+          self.vdm.value = '';
+          self.oj.value = '';
+          self.dspin.value = '';
+          self.dcrist.value = '';
+          self.dtroch.value = '';
+          self.cext.value = '';
+          self.genitalAnomalies.value = '';
+          self.bishop.value = '';
+          self.cervixBack.checked = false;
+          self.cervixFront.checked = false;
+          self.cervixCenter.checked = false;
+          self.cervixTight.checked = false;
+          self.cervixMiddleSoft.checked = false;
+          self.cervixSoft.checked = false;
+          self.cervixLength.value = '';
+          self.useExternalThroat.checked = false;
+          self.cervixChannel.value = '';
+          self.arches.value = '';
+          self.conjugate.value = '';
+          self.pelvisExostosis.value = '';
+          self.diagnosis.value = '';
+          self.conclusion.value = '';
+          self.birthPlanUse.checked = false;
+          self.birthPlan.value = '';
+      };
   </script>
 </appointment>
