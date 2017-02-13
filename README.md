@@ -54,3 +54,15 @@ For example, to build:
 - for Windows x32 `./build.sh windows 386`
 
 - for current OS `./build.sh`
+
+The deploy files will located in **_build** directory.
+Before run application, make sure you have the configuration files in **env** (default) directory.
+To customize location of configuration files use flags:
+  **-cfg-dir** - dir with app's config (default "./env")
+  **-cfg-name** - app's config base file name (default "dev")
+
+To run application:
+```
+$ cd _build/backend
+$./backend
+```

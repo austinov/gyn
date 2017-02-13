@@ -1,5 +1,5 @@
 hash: afef2ee40750d14e34fe9d4fa0ff542b7d389ed5fd9bf44fa17bc89f8d4b83ed
-updated: 2017-02-11T11:28:56.114030066+03:00
+updated: 2017-02-14T09:40:38.548429337+03:00
 imports:
 - name: github.com/asaskevich/govalidator
   version: 7b3beb6df3c42abd3509abfc3bcacc0fbfb7c877
@@ -40,7 +40,7 @@ imports:
   - log
   - random
 - name: github.com/lib/pq
-  version: 0477eb88c5ca4009cb281f13c90633375b6a9987
+  version: ba5d4f7a35561e22fbdf7a39aa0070f4d460cfc0
   subpackages:
   - oid
 - name: github.com/magiconair/properties
@@ -85,7 +85,7 @@ imports:
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: aaabbdc969c3935a2a7f61efac801e7163c73a2a
+  version: e24f485414aeafb646f6fca458b0bf869c0880a1
   subpackages:
   - unix
 - name: golang.org/x/text

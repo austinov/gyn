@@ -10,7 +10,7 @@ BACKEND_BIN=backend
 pushd "$(dirname "$(readlink -f "$BASH_SOURCE[0]")")" > /dev/null && {
 
   rm -fr $BUILD_DIR
-  mkdir -p $BUILD_DIR/$UI_DIR $BUILD_DIR/$BACKEND_DIR
+  mkdir -p $BUILD_DIR/$UI_DIR $BUILD_DIR/$BACKEND_DIR $BUILD_DIR/$BACKEND_DIR/env
 
   cd $UI_DIR
 
@@ -46,6 +46,7 @@ pushd "$(dirname "$(readlink -f "$BASH_SOURCE[0]")")" > /dev/null && {
 
   # Copy build folder
   cp -R docx/ ../$BUILD_DIR/$BACKEND_DIR/
+  cp env/sample.yaml ../$BUILD_DIR/$BACKEND_DIR/env/
 
   echo
   echo "Application was build into $BUILD_DIR directory."
